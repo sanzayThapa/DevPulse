@@ -19,11 +19,26 @@ type AuthContextValue = AuthState & {
 const defaultState: AuthState = {
   isAuthenticated: false,
   role: "admin",
-  name: "Maya Chen",
-  email: "maya@devpulse.app"
+  name: "DevPulse Admin",
+  email: "admin@devpulse.app"
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+
+function roleDetails(role: Role) {
+  return role === "admin"
+    ? { name: "DevPulse Admin", email: "admin@devpulse.app" }
+    : { name: "DevPulse User", email: "user@devpulse.app" };
+}
+
+function normalizeDemoState(state: AuthState): AuthState {
+  const details = roleDetails(state.role);
+  return {
+    ...state,
+    name: details.name,
+    email: state.email.includes("@devpulse.app") ? details.email : state.email
+  };
+}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<AuthState>(defaultState);
@@ -31,7 +46,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const saved = localStorage.getItem("devpulse-auth");
     if (saved) {
-      setState(JSON.parse(saved) as AuthState);
+      setState(normalizeDemoState(JSON.parse(saved) as AuthState));
     }
   }, []);
 
@@ -46,7 +61,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setState({
           isAuthenticated: true,
           role,
-          name: role === "admin" ? "Maya Chen" : "Leo Martin",
+          name: roleDetails(role).name,
           email
         }),
       logout: () => setState({ ...defaultState, isAuthenticated: false }),
@@ -54,8 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setState((current) => ({
           ...current,
           role,
-          name: role === "admin" ? "Maya Chen" : "Leo Martin",
-          email: role === "admin" ? "maya@devpulse.app" : "leo@devpulse.app"
+          ...roleDetails(role)
         }))
     }),
     [state]

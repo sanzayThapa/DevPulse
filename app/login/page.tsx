@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { BarChart3, Gauge, LockKeyhole, Mail } from "lucide-react";
@@ -16,10 +17,14 @@ type LoginForm = {
 export default function LoginPage() {
   const { login } = useAuth();
   const router = useRouter();
-  const { register, handleSubmit, watch } = useForm<LoginForm>({
-    defaultValues: { email: "maya@devpulse.app", role: "admin" }
+  const { register, handleSubmit, watch, setValue } = useForm<LoginForm>({
+    defaultValues: { email: "admin@devpulse.app", role: "admin" }
   });
   const role = watch("role");
+
+  useEffect(() => {
+    setValue("email", role === "admin" ? "admin@devpulse.app" : "user@devpulse.app");
+  }, [role, setValue]);
 
   const onSubmit = (values: LoginForm) => {
     login(values.email, values.role);

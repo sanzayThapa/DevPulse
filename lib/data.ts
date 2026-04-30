@@ -56,8 +56,8 @@ export const reports: Report[] = [
 ];
 
 export const users: User[] = [
-  { id: "USR-001", name: "Maya Chen", email: "maya@devpulse.app", role: "admin", status: "active", plan: "Enterprise", lastSeen: "2 min ago", avatar: "MC" },
-  { id: "USR-002", name: "Leo Martin", email: "leo@devpulse.app", role: "user", status: "active", plan: "Scale", lastSeen: "18 min ago", avatar: "LM" },
+  { id: "USR-001", name: "DevPulse Admin", email: "admin@devpulse.app", role: "admin", status: "active", plan: "Enterprise", lastSeen: "2 min ago", avatar: "DA" },
+  { id: "USR-002", name: "DevPulse User", email: "user@devpulse.app", role: "user", status: "active", plan: "Scale", lastSeen: "18 min ago", avatar: "DU" },
   { id: "USR-003", name: "Priya Shah", email: "priya@devpulse.app", role: "user", status: "invited", plan: "Growth", lastSeen: "Pending", avatar: "PS" },
   { id: "USR-004", name: "Noah Reed", email: "noah@devpulse.app", role: "user", status: "active", plan: "Growth", lastSeen: "1 hr ago", avatar: "NR" },
   { id: "USR-005", name: "Ava Stone", email: "ava@devpulse.app", role: "user", status: "suspended", plan: "Starter", lastSeen: "4 days ago", avatar: "AS" }
