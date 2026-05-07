@@ -7,12 +7,16 @@ import { BarChart3, Gauge, LockKeyhole, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/lib/auth";
+import { ROLE_META, roleDetails } from "@/lib/roles";
+import { cn } from "@/lib/utils";
 import type { Role } from "@/types/analytics";
 
 type LoginForm = {
   email: string;
   role: Role;
 };
+
+const ROLES: Role[] = ["admin", "manager", "viewer"];
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -23,7 +27,7 @@ export default function LoginPage() {
   const role = watch("role");
 
   useEffect(() => {
-    setValue("email", role === "admin" ? "admin@devpulse.app" : "user@devpulse.app");
+    setValue("email", roleDetails(role).email);
   }, [role, setValue]);
 
   const onSubmit = (values: LoginForm) => {
@@ -41,19 +45,21 @@ export default function LoginPage() {
               <Gauge className="h-5 w-5" />
             </span>
             <div>
-              <p className="font-bold">DevPulse</p>
-              <p className="text-sm text-slate-300">Real-time analytics SaaS</p>
+              <p className="font-bold">DevPulse Cloud</p>
+              <p className="text-sm text-slate-300">Production analytics platform</p>
             </div>
           </div>
 
           <div className="max-w-xl">
             <Badge className="border-white/15 bg-white/10 text-cyan-100">
               <span className="h-2 w-2 rounded-full bg-emerald-400" />
-              Portfolio-ready dashboard
+              Portfolio-ready · Enterprise-grade
             </Badge>
-            <h1 className="mt-6 text-5xl font-bold tracking-normal">Monitor the whole product pulse from one precise surface.</h1>
+            <h1 className="mt-6 text-5xl font-bold tracking-normal">
+              Monitor the whole product pulse from one precise surface.
+            </h1>
             <p className="mt-5 text-lg leading-8 text-slate-300">
-              Traffic, revenue, API reliability, conversion, and user activity update in a polished interface designed for screenshots and real product workflows.
+              Traffic, revenue, API reliability, error monitoring, and user activity — all in a polished analytics platform with role-based access and AI insights.
             </p>
           </div>
 
@@ -88,27 +94,43 @@ export default function LoginPage() {
 
           <div className="mt-5">
             <p className="text-sm font-medium">Demo role</p>
-            <div className="mt-2 grid grid-cols-2 gap-2 rounded-xl border border-border bg-muted/50 p-1">
-              {(["admin", "user"] as Role[]).map((option) => (
-                <label
-                  key={option}
-                  className={`focus-ring flex h-10 cursor-pointer items-center justify-center rounded-lg text-sm font-semibold capitalize transition ${role === option ? "bg-panel shadow-sm" : "text-subtle hover:text-foreground"}`}
-                >
-                  <input className="sr-only" type="radio" value={option} {...register("role")} />
-                  {option}
-                </label>
-              ))}
+            <div className="mt-2 space-y-2">
+              {ROLES.map((option) => {
+                const meta = ROLE_META[option];
+                const isSelected = role === option;
+                return (
+                  <label
+                    key={option}
+                    className={cn(
+                      "flex cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 transition",
+                      isSelected ? "border-brand-500 bg-brand-50/50 dark:bg-brand-950/20" : "border-border hover:border-brand-300"
+                    )}
+                  >
+                    <input className="sr-only" type="radio" value={option} {...register("role")} />
+                    <div className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border text-xs font-bold capitalize", meta.color)}>
+                      {option[0].toUpperCase()}
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold">{meta.label}</p>
+                      <p className="text-xs text-subtle">{meta.description}</p>
+                    </div>
+                    {isSelected && (
+                      <div className="ml-auto h-2 w-2 rounded-full bg-brand-500" />
+                    )}
+                  </label>
+                );
+              })}
             </div>
           </div>
 
           <Button type="submit" variant="primary" className="mt-6 w-full">
             <LockKeyhole className="h-4 w-4" />
-            Sign in to DevPulse
+            Sign in to DevPulse Cloud
           </Button>
 
           <div className="mt-6 flex items-center justify-center gap-2 text-xs text-subtle">
             <BarChart3 className="h-3.5 w-3.5" />
-            Mock auth stored locally for demo mode
+            Mock auth stored locally · No real credentials needed
           </div>
         </form>
       </section>

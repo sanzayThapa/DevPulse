@@ -2,34 +2,32 @@
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { Role } from "@/types/analytics";
+import { roleDetails } from "@/lib/roles";
 
 type AuthState = {
   isAuthenticated: boolean;
   role: Role;
   name: string;
   email: string;
+  hasCompletedOnboarding: boolean;
 };
 
 type AuthContextValue = AuthState & {
   login: (email: string, role: Role) => void;
   logout: () => void;
   setRole: (role: Role) => void;
+  completeOnboarding: () => void;
 };
 
 const defaultState: AuthState = {
   isAuthenticated: false,
   role: "admin",
   name: "DevPulse Admin",
-  email: "admin@devpulse.app"
+  email: "admin@devpulse.app",
+  hasCompletedOnboarding: false
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
-
-function roleDetails(role: Role) {
-  return role === "admin"
-    ? { name: "DevPulse Admin", email: "admin@devpulse.app" }
-    : { name: "DevPulse User", email: "user@devpulse.app" };
-}
 
 function normalizeDemoState(state: AuthState): AuthState {
   const details = roleDetails(state.role);
@@ -62,7 +60,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           isAuthenticated: true,
           role,
           name: roleDetails(role).name,
-          email
+          email,
+          hasCompletedOnboarding: false
         }),
       logout: () => setState({ ...defaultState, isAuthenticated: false }),
       setRole: (role) =>
@@ -70,7 +69,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           ...current,
           role,
           ...roleDetails(role)
-        }))
+        })),
+      completeOnboarding: () =>
+        setState((current) => ({ ...current, hasCompletedOnboarding: true }))
     }),
     [state]
   );

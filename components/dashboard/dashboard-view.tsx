@@ -10,6 +10,7 @@ import { RevenueBarChart } from "@/components/charts/revenue-bar-chart";
 import { SourceDonutChart } from "@/components/charts/source-donut-chart";
 import { FilterBar } from "@/components/filters/filter-bar";
 import { PageHeader } from "@/components/layout/page-header";
+import { InsightCards } from "@/components/insights/insight-cards";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { activeUsersData, baseMetrics, getLiveActiveUsersData, getLiveMetrics, getLiveTrafficData, revenueByCategory, trafficData, trafficSources } from "@/lib/data";
@@ -68,6 +69,8 @@ export function DashboardView({ mode = "dashboard" }: { mode?: "dashboard" | "an
           <MetricCard key={metric.key} metric={metric} />
         ))}
       </div>
+
+      <InsightCards />
 
       <div className="mt-6 grid gap-6 xl:grid-cols-2">
         <ChartCard title="Traffic over time" eyebrow="Requests and visitors">
