@@ -8,6 +8,7 @@ import {
   BarChart3,
   ChevronDown,
   ChevronRight,
+  CreditCard,
   FileText,
   Gauge,
   Globe,
@@ -60,6 +61,7 @@ const nav: NavItem[] = [
   },
   { href: "/reports", label: "Reports", icon: FileText, permission: "view:reports" },
   { href: "/users", label: "Users", icon: Users, permission: "view:users" },
+  { href: "/billing", label: "Billing", icon: CreditCard, permission: "view:billing" },
   { href: "/settings", label: "Settings", icon: Settings, permission: "view:settings" }
 ];
 

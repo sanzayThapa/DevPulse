@@ -6,6 +6,7 @@ export type Permission =
   | "view:reports"
   | "view:users"
   | "view:settings"
+  | "view:billing"
   | "export:reports"
   | "manage:users"
   | "manage:settings"
@@ -18,6 +19,7 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "view:reports",
     "view:users",
     "view:settings",
+    "view:billing",
     "export:reports",
     "manage:users",
     "manage:settings",
@@ -28,6 +30,7 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "view:analytics",
     "view:reports",
     "view:settings",
+    "view:billing",
     "export:reports"
   ],
   viewer: ["view:dashboard", "view:analytics", "view:reports"]
