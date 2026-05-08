@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useTheme } from "@/components/layout/theme-provider";
+import { hasPermission, type Permission } from "@/lib/roles";
 import { cn } from "@/lib/utils";
 import type { Role } from "@/types/analytics";
 
@@ -32,6 +33,7 @@ type Command = {
   icon: React.ElementType;
   group: string;
   action: () => void;
+  permission?: Permission;
   keywords?: string[];
 };
 
@@ -54,17 +56,17 @@ export function CommandPalette({ open, onClose }: Props) {
   };
 
   const commands: Command[] = [
-    { id: "dashboard", label: "Dashboard", description: "Main performance dashboard", icon: LayoutDashboard, group: "Navigation", action: () => navigate("/dashboard"), keywords: ["home", "overview"] },
-    { id: "analytics", label: "Analytics Overview", description: "Full analytics hub", icon: BarChart3, group: "Navigation", action: () => navigate("/analytics"), keywords: ["charts", "metrics"] },
-    { id: "traffic", label: "Traffic Analytics", description: "Visitors, page views, sessions", icon: Globe, group: "Navigation", action: () => navigate("/analytics/traffic"), keywords: ["visitors", "pageviews"] },
-    { id: "revenue", label: "Revenue Analytics", description: "MRR, ARR, plan breakdown", icon: TrendingUp, group: "Navigation", action: () => navigate("/analytics/revenue"), keywords: ["mrr", "arr", "money"] },
-    { id: "api-performance", label: "API Performance", description: "Latency, throughput, endpoints", icon: Zap, group: "Navigation", action: () => navigate("/analytics/api-performance"), keywords: ["latency", "endpoints"] },
-    { id: "errors", label: "Error Monitoring", description: "Error events and alerts", icon: AlertTriangle, group: "Navigation", action: () => navigate("/analytics/errors"), keywords: ["errors", "bugs", "exceptions"] },
-    { id: "user-activity", label: "User Activity", description: "DAU, WAU, MAU, retention", icon: Activity, group: "Navigation", action: () => navigate("/analytics/user-activity"), keywords: ["dau", "retention"] },
-    { id: "reports", label: "Reports", description: "Export and download reports", icon: FileText, group: "Navigation", action: () => navigate("/reports"), keywords: ["export", "csv", "pdf"] },
-    { id: "users", label: "User Management", description: "Manage team members", icon: Users, group: "Navigation", action: () => navigate("/users"), keywords: ["team", "members"] },
-    { id: "billing", label: "Billing & Plans", description: "Manage subscription, invoices, and usage", icon: CreditCard, group: "Navigation", action: () => navigate("/billing"), keywords: ["plan", "invoice", "subscription", "upgrade", "payment"] },
-    { id: "settings", label: "Settings", description: "Profile and workspace settings", icon: Settings, group: "Navigation", action: () => navigate("/settings"), keywords: ["profile", "api key"] },
+    { id: "dashboard", label: "Dashboard", description: "Main performance dashboard", icon: LayoutDashboard, group: "Navigation", action: () => navigate("/dashboard"), permission: "view:dashboard", keywords: ["home", "overview"] },
+    { id: "analytics", label: "Analytics Overview", description: "Full analytics hub", icon: BarChart3, group: "Navigation", action: () => navigate("/analytics"), permission: "view:analytics", keywords: ["charts", "metrics"] },
+    { id: "traffic", label: "Traffic Analytics", description: "Visitors, page views, sessions", icon: Globe, group: "Navigation", action: () => navigate("/analytics/traffic"), permission: "view:analytics", keywords: ["visitors", "pageviews"] },
+    { id: "revenue", label: "Revenue Analytics", description: "MRR, ARR, plan breakdown", icon: TrendingUp, group: "Navigation", action: () => navigate("/analytics/revenue"), permission: "view:analytics", keywords: ["mrr", "arr", "money"] },
+    { id: "api-performance", label: "API Performance", description: "Latency, throughput, endpoints", icon: Zap, group: "Navigation", action: () => navigate("/analytics/api-performance"), permission: "view:api-performance", keywords: ["latency", "endpoints"] },
+    { id: "errors", label: "Error Monitoring", description: "Error events and alerts", icon: AlertTriangle, group: "Navigation", action: () => navigate("/analytics/errors"), permission: "view:error-monitoring", keywords: ["errors", "bugs", "exceptions"] },
+    { id: "user-activity", label: "User Activity", description: "DAU, WAU, MAU, retention", icon: Activity, group: "Navigation", action: () => navigate("/analytics/user-activity"), permission: "view:analytics", keywords: ["dau", "retention"] },
+    { id: "reports", label: "Reports", description: "Export and download reports", icon: FileText, group: "Navigation", action: () => navigate("/reports"), permission: "view:reports", keywords: ["export", "csv", "pdf"] },
+    { id: "users", label: "User Management", description: "Manage team members", icon: Users, group: "Navigation", action: () => navigate("/users"), permission: "view:users", keywords: ["team", "members"] },
+    { id: "billing", label: "Billing & Plans", description: "Manage subscription, invoices, and usage", icon: CreditCard, group: "Navigation", action: () => navigate("/billing"), permission: "view:billing", keywords: ["plan", "invoice", "subscription", "upgrade", "payment"] },
+    { id: "settings", label: "Settings", description: "Profile and workspace settings", icon: Settings, group: "Navigation", action: () => navigate("/settings"), permission: "view:settings", keywords: ["profile", "api key"] },
     { id: "theme-toggle", label: `Switch to ${theme === "dark" ? "Light" : "Dark"} Mode`, description: "Toggle theme appearance", icon: theme === "dark" ? Sun : Moon, group: "Actions", action: () => { toggleTheme(); onClose(); }, keywords: ["dark", "light", "theme"] },
     { id: "role-admin", label: "Switch to Admin role", description: "Full platform access", icon: Shield, group: "Roles", action: () => { setRole("admin" as Role); onClose(); }, keywords: ["admin"] },
     { id: "role-manager", label: "Switch to Manager role", description: "Analytics and reports", icon: Shield, group: "Roles", action: () => { setRole("manager" as Role); onClose(); }, keywords: ["manager"] },
@@ -72,8 +74,10 @@ export function CommandPalette({ open, onClose }: Props) {
     { id: "devpulse", label: "DevPulse Cloud", description: "About this workspace", icon: Gauge, group: "Actions", action: () => navigate("/dashboard"), keywords: ["about", "workspace"] }
   ];
 
+  const allowedCommands = commands.filter((cmd) => !cmd.permission || hasPermission(role, cmd.permission));
+
   const filtered = query.trim()
-    ? commands.filter((cmd) => {
+    ? allowedCommands.filter((cmd) => {
         const q = query.toLowerCase();
         return (
           cmd.label.toLowerCase().includes(q) ||
@@ -81,7 +85,7 @@ export function CommandPalette({ open, onClose }: Props) {
           cmd.keywords?.some((k) => k.includes(q))
         );
       })
-    : commands;
+    : allowedCommands;
 
   const grouped = filtered.reduce<Record<string, Command[]>>((acc, cmd) => {
     (acc[cmd.group] ??= []).push(cmd);

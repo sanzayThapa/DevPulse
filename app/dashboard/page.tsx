@@ -9,7 +9,7 @@ export default function DashboardPage() {
   const { isAuthenticated, hasCompletedOnboarding } = useAuth();
 
   return (
-    <ProtectedPage>
+    <ProtectedPage permission="view:dashboard">
       {isAuthenticated && !hasCompletedOnboarding && <OnboardingWizard />}
       <DashboardView />
     </ProtectedPage>

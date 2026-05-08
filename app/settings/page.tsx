@@ -7,14 +7,19 @@ import { Card, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/layout/theme-provider";
 import { useAuth } from "@/lib/auth";
+import { hasPermission } from "@/lib/roles";
 import type { Role } from "@/types/analytics";
 
 export default function SettingsPage() {
   const { theme, toggleTheme } = useTheme();
   const { role, setRole, name, email } = useAuth();
+  const canViewApiKeys = hasPermission(role, "view:api-keys");
 
   return (
-    <ProtectedPage>
+    <ProtectedPage
+      permission="view:settings"
+      restrictedDescription="Settings are available to admins and managers. Viewers can use the Profile page for read-only account details."
+    >
       <PageHeader title="Settings" description="Profile, theme, notification, API key, and demo role preferences." />
 
       <div className="grid gap-6 xl:grid-cols-[1fr_.9fr]">
@@ -87,19 +92,34 @@ export default function SettingsPage() {
           </div>
         </Card>
 
-        <Card className="xl:col-span-2">
-          <CardHeader title="API Key" eyebrow="Mock integration" />
-          <div className="flex flex-col gap-3 rounded-lg border border-border bg-muted/45 p-4 sm:flex-row sm:items-center">
-            <div className="flex flex-1 items-center gap-3">
-              <KeyRound className="h-5 w-5 text-brand-600 dark:text-brand-400" />
-              <code className="min-w-0 truncate text-sm">dp_live_8f4b2c9e_analytics_demo_key</code>
+        {canViewApiKeys ? (
+          <Card className="xl:col-span-2">
+            <CardHeader title="API Key" eyebrow="Mock integration" />
+            <div className="flex flex-col gap-3 rounded-lg border border-border bg-muted/45 p-4 sm:flex-row sm:items-center">
+              <div className="flex flex-1 items-center gap-3">
+                <KeyRound className="h-5 w-5 text-brand-600 dark:text-brand-400" />
+                <code className="min-w-0 truncate text-sm">dp_live_8f4b2c9e_analytics_demo_key</code>
+              </div>
+              <Button onClick={() => navigator.clipboard.writeText("dp_live_8f4b2c9e_analytics_demo_key")}>
+                <Clipboard className="h-4 w-4" />
+                Copy
+              </Button>
             </div>
-            <Button onClick={() => navigator.clipboard.writeText("dp_live_8f4b2c9e_analytics_demo_key")}>
-              <Clipboard className="h-4 w-4" />
-              Copy
-            </Button>
-          </div>
-        </Card>
+          </Card>
+        ) : (
+          <Card className="xl:col-span-2">
+            <CardHeader title="API Key" eyebrow="Restricted" />
+            <div className="rounded-lg border border-border bg-muted/35 p-4">
+              <div className="flex items-center gap-3">
+                <KeyRound className="h-5 w-5 text-subtle" />
+                <div>
+                  <p className="text-sm font-semibold">API keys hidden for manager access</p>
+                  <p className="mt-1 text-sm text-subtle">Managers can adjust workspace preferences, but only admins can view or copy integration secrets.</p>
+                </div>
+              </div>
+            </div>
+          </Card>
+        )}
       </div>
     </ProtectedPage>
   );

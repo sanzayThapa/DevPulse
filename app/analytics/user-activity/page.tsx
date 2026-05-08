@@ -39,7 +39,7 @@ export default function UserActivityPage() {
   const dauWauRatio = ((latest.dau / latest.wau) * 100).toFixed(1);
 
   return (
-    <ProtectedPage>
+    <ProtectedPage permission="view:analytics">
       <PageHeader title="User Activity" description="DAU, WAU, MAU, session patterns, and feature adoption." />
       <FilterBar filters={filters} onChange={setFilters} />
 

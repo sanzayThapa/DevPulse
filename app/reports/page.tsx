@@ -152,7 +152,7 @@ export default function ReportsPage() {
   );
 
   return (
-    <ProtectedPage>
+    <ProtectedPage permission="view:reports">
       {showExportModal && (
         <ExportModal data={filteredReports} onClose={() => setShowExportModal(false)} />
       )}
@@ -219,7 +219,7 @@ export default function ReportsPage() {
       </PageHeader>
 
       <FilterBar filters={filters} onChange={setFilters} />
-      <ReportsTable data={filteredReports} />
+      <ReportsTable data={filteredReports} canExport={canExport} />
     </ProtectedPage>
   );
 }

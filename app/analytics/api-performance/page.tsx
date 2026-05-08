@@ -38,7 +38,10 @@ export default function ApiPerformancePage() {
   const overallErrorRate = (apiEndpoints.reduce((s, e) => s + e.errorRate, 0) / apiEndpoints.length).toFixed(2);
 
   return (
-    <ProtectedPage>
+    <ProtectedPage
+      permission="view:api-performance"
+      restrictedDescription="API performance is an admin-only operational surface in this demo workspace."
+    >
       <PageHeader title="API Performance" description="Latency percentiles, throughput, endpoint health, and error distribution." />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">

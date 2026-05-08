@@ -9,7 +9,7 @@ import { exportReportsCsv } from "@/lib/export";
 import { formatMetric } from "@/lib/utils";
 import type { Report } from "@/types/analytics";
 
-export function ReportsTable({ data }: { data: Report[] }) {
+export function ReportsTable({ data, canExport = false }: { data: Report[]; canExport?: boolean }) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const columns = useMemo<ColumnDef<Report>[]>(
     () => [
@@ -68,16 +68,22 @@ export function ReportsTable({ data }: { data: Report[] }) {
           <h2 className="font-semibold">Analytics Reports</h2>
           <p className="mt-1 text-sm text-subtle">Exportable snapshots designed for leadership and product reviews.</p>
         </div>
-        <div className="flex gap-2">
-          <Button onClick={() => exportReportsCsv(data)}>
-            <Download className="h-4 w-4" />
-            CSV
-          </Button>
-          <Button onClick={() => alert("PDF export placeholder: connect jsPDF or server-side rendering when ready.")}>
-            <FileDown className="h-4 w-4" />
-            PDF
-          </Button>
-        </div>
+        {canExport ? (
+          <div className="flex gap-2">
+            <Button onClick={() => exportReportsCsv(data)}>
+              <Download className="h-4 w-4" />
+              CSV
+            </Button>
+            <Button onClick={() => alert("PDF export placeholder: connect jsPDF or server-side rendering when ready.")}>
+              <FileDown className="h-4 w-4" />
+              PDF
+            </Button>
+          </div>
+        ) : (
+          <span className="rounded-md border border-border bg-muted px-2.5 py-1 text-xs font-medium text-subtle">
+            Read-only
+          </span>
+        )}
       </div>
       <div className="overflow-x-auto">
         <table className="w-full min-w-[940px] text-left text-sm">

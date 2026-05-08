@@ -5,25 +5,30 @@ import { Activity, AlertTriangle, ArrowRight, BarChart3, Globe, TrendingUp, Zap 
 import { ProtectedPage } from "@/components/layout/protected-page";
 import { PageHeader } from "@/components/layout/page-header";
 import { DashboardView } from "@/components/dashboard/dashboard-view";
+import { useAuth } from "@/lib/auth";
+import { hasPermission, type Permission } from "@/lib/roles";
 
 const SECTIONS = [
-  { href: "/analytics/traffic", label: "Traffic Analytics", description: "Visitors, page views, sessions, acquisition channels", icon: Globe, color: "text-brand-500" },
-  { href: "/analytics/revenue", label: "Revenue Analytics", description: "MRR, ARR, plan breakdown, churn, and ARPU", icon: TrendingUp, color: "text-emerald-500" },
-  { href: "/analytics/api-performance", label: "API Performance", description: "Latency percentiles, throughput, endpoint health", icon: Zap, color: "text-amber-500" },
-  { href: "/analytics/errors", label: "Error Monitoring", description: "Error events, types, resolution status", icon: AlertTriangle, color: "text-red-500" },
-  { href: "/analytics/user-activity", label: "User Activity", description: "DAU/WAU/MAU, feature adoption, session patterns", icon: Activity, color: "text-brand-500" }
+  { href: "/analytics/traffic", label: "Traffic Analytics", description: "Visitors, page views, sessions, acquisition channels", icon: Globe, color: "text-brand-500", permission: "view:analytics" },
+  { href: "/analytics/revenue", label: "Revenue Analytics", description: "MRR, ARR, plan breakdown, churn, and ARPU", icon: TrendingUp, color: "text-emerald-500", permission: "view:analytics" },
+  { href: "/analytics/api-performance", label: "API Performance", description: "Latency percentiles, throughput, endpoint health", icon: Zap, color: "text-amber-500", permission: "view:api-performance" },
+  { href: "/analytics/errors", label: "Error Monitoring", description: "Error events, types, resolution status", icon: AlertTriangle, color: "text-red-500", permission: "view:error-monitoring" },
+  { href: "/analytics/user-activity", label: "User Activity", description: "DAU/WAU/MAU, feature adoption, session patterns", icon: Activity, color: "text-brand-500", permission: "view:analytics" }
 ];
 
 export default function AnalyticsPage() {
+  const { role } = useAuth();
+  const sections = SECTIONS.filter((section) => hasPermission(role, section.permission as Permission));
+
   return (
-    <ProtectedPage>
+    <ProtectedPage permission="view:analytics">
       <PageHeader
         title="Analytics"
         description="Explore all analytics sections — from traffic and revenue to API performance and user activity."
       />
 
       <div className="mb-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-        {SECTIONS.map((section) => {
+        {sections.map((section) => {
           const Icon = section.icon;
           return (
             <Link

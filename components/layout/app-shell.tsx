@@ -6,6 +6,7 @@ import {
   Activity,
   AlertTriangle,
   BarChart3,
+  Bell,
   ChevronDown,
   ChevronRight,
   CreditCard,
@@ -16,9 +17,11 @@ import {
   LogOut,
   Menu,
   Moon,
+  ScrollText,
   Search,
   Settings,
   Shield,
+  UserCircle,
   Sun,
   TrendingUp,
   Users,
@@ -33,37 +36,51 @@ import { useTheme } from "@/components/layout/theme-provider";
 import { CommandPalette } from "@/components/command-palette/command-palette";
 import { NotificationsPanel } from "@/components/notifications/notifications-panel";
 import { cn } from "@/lib/utils";
-import { ROLE_META, hasPermission } from "@/lib/roles";
+import { ROLE_META, hasPermission, type Permission } from "@/lib/roles";
 import type { Role } from "@/types/analytics";
 
 type NavItem = {
   href: string;
   label: string;
   icon: React.ElementType;
-  permission?: Parameters<typeof hasPermission>[1];
+  permission?: Permission;
   children?: { href: string; label: string; icon: React.ElementType }[];
 };
 
-const nav: NavItem[] = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, permission: "view:dashboard" },
-  {
-    href: "/analytics",
-    label: "Analytics",
-    icon: BarChart3,
-    permission: "view:analytics",
-    children: [
-      { href: "/analytics/traffic", label: "Traffic", icon: Globe },
-      { href: "/analytics/revenue", label: "Revenue", icon: TrendingUp },
-      { href: "/analytics/api-performance", label: "API Performance", icon: Zap },
-      { href: "/analytics/errors", label: "Error Monitoring", icon: AlertTriangle },
-      { href: "/analytics/user-activity", label: "User Activity", icon: Activity }
-    ]
-  },
-  { href: "/reports", label: "Reports", icon: FileText, permission: "view:reports" },
-  { href: "/users", label: "Users", icon: Users, permission: "view:users" },
-  { href: "/billing", label: "Billing", icon: CreditCard, permission: "view:billing" },
-  { href: "/settings", label: "Settings", icon: Settings, permission: "view:settings" }
+const analyticsChildren = [
+  { href: "/analytics/traffic", label: "Traffic", icon: Globe },
+  { href: "/analytics/revenue", label: "Revenue", icon: TrendingUp },
+  { href: "/analytics/user-activity", label: "User Activity", icon: Activity }
 ];
+
+const roleNav: Record<Role, NavItem[]> = {
+  admin: [
+    { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, permission: "view:dashboard" },
+    { href: "/analytics", label: "Analytics", icon: BarChart3, permission: "view:analytics", children: analyticsChildren },
+    { href: "/analytics/api-performance", label: "API Performance", icon: Zap, permission: "view:api-performance" },
+    { href: "/analytics/errors", label: "Error Monitoring", icon: AlertTriangle, permission: "view:error-monitoring" },
+    { href: "/users", label: "Users", icon: Users, permission: "view:users" },
+    { href: "/team-activity", label: "Team Activity", icon: Activity, permission: "view:team-activity" },
+    { href: "/billing", label: "Billing", icon: CreditCard, permission: "view:billing" },
+    { href: "/reports", label: "Reports", icon: FileText, permission: "view:reports" },
+    { href: "/audit-logs", label: "Audit Logs", icon: ScrollText, permission: "view:audit-logs" },
+    { href: "/settings", label: "Settings", icon: Settings, permission: "view:settings" }
+  ],
+  manager: [
+    { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, permission: "view:dashboard" },
+    { href: "/analytics", label: "Analytics", icon: BarChart3, permission: "view:analytics", children: analyticsChildren },
+    { href: "/team-performance", label: "Team Performance", icon: TrendingUp, permission: "view:team-performance" },
+    { href: "/reports", label: "Reports", icon: FileText, permission: "view:reports" },
+    { href: "/notifications", label: "Notifications", icon: Bell, permission: "view:notifications" },
+    { href: "/settings", label: "Settings", icon: Settings, permission: "view:settings" }
+  ],
+  viewer: [
+    { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, permission: "view:dashboard" },
+    { href: "/analytics", label: "Analytics", icon: BarChart3, permission: "view:analytics", children: analyticsChildren },
+    { href: "/reports", label: "Reports", icon: FileText, permission: "view:reports" },
+    { href: "/profile", label: "Profile", icon: UserCircle, permission: "view:profile" }
+  ]
+};
 
 const ALL_ROLES: Role[] = ["admin", "manager", "viewer"];
 
@@ -88,6 +105,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }, []);
 
   const roleMeta = ROLE_META[role];
+  const nav = roleNav[role];
 
   return (
     <div className="min-h-screen">
@@ -130,7 +148,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           {nav.map((item) => {
             if (item.permission && !hasPermission(role, item.permission)) return null;
             const Icon = item.icon;
-            const active = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href));
+            const active = item.children
+              ? pathname === item.href || item.children.some((child) => pathname === child.href)
+              : pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href));
             if (item.children) {
               return (
                 <div key={item.href}>

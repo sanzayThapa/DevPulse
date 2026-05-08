@@ -58,7 +58,7 @@ export default function RevenueAnalyticsPage() {
   const mrrGrowth = (((latestMrr.mrr - prevMrr.mrr) / prevMrr.mrr) * 100).toFixed(1);
 
   return (
-    <ProtectedPage>
+    <ProtectedPage permission="view:analytics">
       <PageHeader title="Revenue Analytics" description="MRR, ARR, churn, and plan-level revenue breakdown." />
       <FilterBar filters={filters} onChange={setFilters} />
 

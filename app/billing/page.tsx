@@ -435,7 +435,10 @@ function InvoicesSection() {
 
 export default function BillingPage() {
   return (
-    <ProtectedPage>
+    <ProtectedPage
+      permission="view:billing"
+      restrictedDescription="Billing is admin-only. Managers and viewers can continue using reports and analytics without subscription controls."
+    >
       <PageHeader
         title="Billing & Plans"
         description="Manage your subscription, review usage, and download invoices."

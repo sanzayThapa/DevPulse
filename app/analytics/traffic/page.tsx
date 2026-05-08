@@ -33,7 +33,7 @@ export default function TrafficAnalyticsPage() {
   const avgSession = Math.round(dailyTrafficData.reduce((s, d) => s + d.avgSessionDuration, 0) / dailyTrafficData.length);
 
   return (
-    <ProtectedPage>
+    <ProtectedPage permission="view:analytics">
       <PageHeader title="Traffic Analytics" description="Visitors, page views, sessions, and acquisition channels over time." />
       <FilterBar filters={filters} onChange={setFilters} />
 

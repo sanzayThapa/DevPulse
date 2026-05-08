@@ -3,23 +3,40 @@ import type { Role } from "@/types/analytics";
 export type Permission =
   | "view:dashboard"
   | "view:analytics"
+  | "view:api-performance"
+  | "view:error-monitoring"
   | "view:reports"
   | "view:users"
+  | "view:team-activity"
+  | "view:team-performance"
+  | "view:notifications"
+  | "view:audit-logs"
   | "view:settings"
+  | "view:profile"
   | "view:billing"
+  | "view:api-keys"
   | "export:reports"
   | "manage:users"
   | "manage:settings"
+  | "read:only"
   | "switch:role";
 
-const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
+export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
   admin: [
     "view:dashboard",
     "view:analytics",
+    "view:api-performance",
+    "view:error-monitoring",
     "view:reports",
     "view:users",
+    "view:team-activity",
+    "view:team-performance",
+    "view:notifications",
+    "view:audit-logs",
     "view:settings",
+    "view:profile",
     "view:billing",
+    "view:api-keys",
     "export:reports",
     "manage:users",
     "manage:settings",
@@ -29,15 +46,24 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "view:dashboard",
     "view:analytics",
     "view:reports",
+    "view:team-performance",
+    "view:notifications",
     "view:settings",
-    "view:billing",
     "export:reports"
   ],
-  viewer: ["view:dashboard", "view:analytics", "view:reports"]
+  viewer: ["view:dashboard", "view:analytics", "view:reports", "view:profile", "read:only"]
 };
 
 export function hasPermission(role: Role, permission: Permission): boolean {
   return ROLE_PERMISSIONS[role].includes(permission);
+}
+
+export function hasAnyPermission(role: Role, permissions: Permission[]): boolean {
+  return permissions.some((permission) => hasPermission(role, permission));
+}
+
+export function isReadOnlyRole(role: Role): boolean {
+  return hasPermission(role, "read:only");
 }
 
 export const ROLE_META: Record<Role, { label: string; description: string; color: string }> = {

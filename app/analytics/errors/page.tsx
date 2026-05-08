@@ -28,7 +28,10 @@ export default function ErrorMonitoringPage() {
   const totalErrors = errorEvents.reduce((s, e) => s + e.count, 0);
 
   return (
-    <ProtectedPage>
+    <ProtectedPage
+      permission="view:error-monitoring"
+      restrictedDescription="Error monitoring is reserved for admins who can investigate production reliability."
+    >
       <PageHeader title="Error Monitoring" description="Live error events, types, impacted endpoints, and resolution status." />
 
       {activeCount > 0 && (
