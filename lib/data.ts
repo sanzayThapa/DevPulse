@@ -143,10 +143,10 @@ export const revenueByPlan = [
 // ─── Traffic Sources ─────────────────────────────────────────────────────────
 
 export const trafficSources: TrafficSource[] = [
-  { source: "Organic", value: 44, color: "#06b6d4" },
+  { source: "Organic", value: 44, color: "#10b981" },
   { source: "Direct", value: 27, color: "#10b981" },
   { source: "Referral", value: 18, color: "#f59e0b" },
-  { source: "Paid", value: 11, color: "#6366f1" }
+  { source: "Paid", value: 11, color: "#334155" }
 ];
 
 // ─── API Performance ─────────────────────────────────────────────────────────

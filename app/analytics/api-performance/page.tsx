@@ -15,10 +15,10 @@ import type { LatencyPoint } from "@/types/analytics";
 
 const METHOD_COLORS: Record<string, string> = {
   GET: "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-900",
-  POST: "bg-brand-50 text-brand-700 border-brand-200 dark:bg-brand-950/40 dark:text-brand-100 dark:border-brand-900",
+  POST: "bg-brand-50 text-brand-700 border-brand-200 dark:bg-brand-500/10 dark:text-brand-300 dark:border-brand-500/30",
   PUT: "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-900",
   DELETE: "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/40 dark:text-red-300 dark:border-red-900",
-  PATCH: "bg-violet-50 text-violet-700 border-violet-200 dark:bg-violet-950/40 dark:text-violet-300 dark:border-violet-900"
+  PATCH: "bg-brand-50 text-brand-700 border-brand-200 dark:bg-brand-500/10 dark:text-brand-300 dark:border-brand-500/30"
 };
 
 type EndpointMetric = "avgLatency" | "requestsPerMin" | "errorRate";
@@ -42,22 +42,22 @@ export default function ApiPerformancePage() {
       <PageHeader title="API Performance" description="Latency percentiles, throughput, endpoint health, and error distribution." />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <div className="panel rounded-xl p-4">
+        <div className="panel rounded-lg p-4">
           <div className="flex items-center gap-2"><Zap className="h-4 w-4 text-subtle" /><p className="text-xs font-medium text-subtle">Total Req/min</p></div>
           <p className="mt-2 text-2xl font-bold">{totalRpm.toLocaleString()}</p>
           <p className="mt-0.5 text-xs text-subtle">Across all endpoints</p>
         </div>
-        <div className="panel rounded-xl p-4">
+        <div className="panel rounded-lg p-4">
           <div className="flex items-center gap-2"><Clock className="h-4 w-4 text-subtle" /><p className="text-xs font-medium text-subtle">Avg. Latency</p></div>
           <p className="mt-2 text-2xl font-bold">{avgLatency}ms</p>
           <p className="mt-0.5 text-xs text-emerald-600 dark:text-emerald-400">Below 100ms SLA</p>
         </div>
-        <div className="panel rounded-xl p-4">
+        <div className="panel rounded-lg p-4">
           <div className="flex items-center gap-2"><Clock className="h-4 w-4 text-subtle" /><p className="text-xs font-medium text-subtle">p99 Latency</p></div>
           <p className="mt-2 text-2xl font-bold">{p99}ms</p>
           <p className="mt-0.5 text-xs text-amber-600 dark:text-amber-400">Peak window 10–12:00</p>
         </div>
-        <div className="panel rounded-xl p-4">
+        <div className="panel rounded-lg p-4">
           <div className="flex items-center gap-2"><AlertTriangle className="h-4 w-4 text-subtle" /><p className="text-xs font-medium text-subtle">Error Rate</p></div>
           <p className="mt-2 text-2xl font-bold">{overallErrorRate}%</p>
           <p className="mt-0.5 text-xs text-red-500">Above 0.3% threshold</p>
@@ -93,7 +93,7 @@ export default function ApiPerformancePage() {
         </ChartCard>
       </div>
 
-      <div className="mt-6 panel rounded-xl overflow-hidden">
+      <div className="mt-6 panel rounded-lg overflow-hidden">
         <div className="border-b border-border px-6 py-4">
           <p className="text-sm font-semibold">All Endpoints</p>
           <p className="text-xs text-subtle mt-0.5">Performance summary per route</p>

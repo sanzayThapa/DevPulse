@@ -4,8 +4,8 @@ import { cn } from "@/lib/utils";
 type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 
 const variants: Record<ButtonVariant, string> = {
-  primary: "bg-foreground text-canvas shadow-sm hover:opacity-90 dark:bg-white dark:text-ink-950",
-  secondary: "border border-border bg-panel text-foreground hover:bg-muted",
+  primary: "bg-brand-500 text-white shadow-sm shadow-brand-950/20 hover:bg-brand-400 dark:hover:bg-brand-400",
+  secondary: "border border-border bg-panel text-foreground shadow-sm hover:border-brand-500/40 hover:bg-muted",
   ghost: "text-subtle hover:bg-muted hover:text-foreground",
   danger: "border border-red-200 bg-red-50 text-red-700 hover:bg-red-100 dark:border-red-950 dark:bg-red-950/30 dark:text-red-300"
 };
@@ -14,7 +14,7 @@ export function Button({ className, variant = "secondary", ...props }: ButtonHTM
   return (
     <button
       className={cn(
-        "focus-ring inline-flex h-10 items-center justify-center gap-2 rounded-lg px-4 text-sm font-medium transition",
+        "focus-ring inline-flex h-10 items-center justify-center gap-2 rounded-md px-4 text-sm font-medium transition",
         variants[variant],
         className
       )}

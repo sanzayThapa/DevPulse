@@ -11,7 +11,7 @@ const TYPE_META = {
   alert: { icon: Zap, color: "text-red-500", bg: "bg-red-50 dark:bg-red-950/40", border: "border-red-200 dark:border-red-900" },
   warning: { icon: AlertTriangle, color: "text-amber-500", bg: "bg-amber-50 dark:bg-amber-950/40", border: "border-amber-200 dark:border-amber-900" },
   success: { icon: Sparkles, color: "text-emerald-500", bg: "bg-emerald-50 dark:bg-emerald-950/40", border: "border-emerald-200 dark:border-emerald-900" },
-  info: { icon: Info, color: "text-brand-500", bg: "bg-brand-50 dark:bg-brand-950/40", border: "border-brand-200 dark:border-brand-900" }
+  info: { icon: Info, color: "text-brand-500", bg: "bg-brand-50 dark:bg-brand-500/10", border: "border-brand-200 dark:border-brand-500/30" }
 };
 
 function NotificationItem({ n, onRead, onDismiss }: { n: Notification; onRead: () => void; onDismiss: () => void }) {
@@ -24,7 +24,7 @@ function NotificationItem({ n, onRead, onDismiss }: { n: Notification; onRead: (
       role="button"
       tabIndex={0}
     >
-      <div className={cn("mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-lg border", meta.bg, meta.border)}>
+      <div className={cn("mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-md border", meta.bg, meta.border)}>
         <Icon className={cn("h-3.5 w-3.5", meta.color)} />
       </div>
       <div className="min-w-0 flex-1">
@@ -80,18 +80,18 @@ export function NotificationsPanel() {
       </Button>
 
       {open && (
-        <div className="absolute right-0 top-12 z-50 w-[380px] max-sm:w-[calc(100vw-2rem)] max-sm:right-[-3rem] overflow-hidden rounded-2xl border border-border bg-panel shadow-2xl">
+        <div className="absolute right-0 top-12 z-50 w-[380px] max-sm:right-[-3rem] max-sm:w-[calc(100vw-2rem)] overflow-hidden rounded-lg border border-border bg-panel shadow-elevated">
           <div className="flex items-center justify-between border-b border-border px-4 py-3">
             <div className="flex items-center gap-2">
               <Bell className="h-4 w-4 text-subtle" />
               <span className="text-sm font-semibold">Notifications</span>
               {unreadCount > 0 && (
-                <span className="rounded-full bg-brand-500 px-1.5 py-0.5 text-[10px] font-bold text-white">{unreadCount}</span>
+                <span className="rounded-md bg-brand-500 px-1.5 py-0.5 text-[10px] font-bold text-white">{unreadCount}</span>
               )}
             </div>
             <button
               onClick={markAllAsRead}
-              className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-subtle transition hover:bg-muted hover:text-foreground"
+              className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-subtle transition hover:bg-muted hover:text-foreground"
             >
               <CheckCheck className="h-3.5 w-3.5" />
               Mark all read

@@ -110,7 +110,7 @@ const USAGE = [
     limit: 10,
     unit: "",
     format: (v: number) => String(v),
-    color: "bg-violet-500"
+    color: "bg-brand-500"
   },
   {
     label: "Data Retention",
@@ -147,7 +147,7 @@ const CURRENT_PLAN: PlanId = "pro";
 
 function DemoBanner() {
   return (
-    <div className="mb-6 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50/70 px-4 py-3 dark:border-amber-900 dark:bg-amber-950/20">
+    <div className="mb-6 flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50/70 px-4 py-3 dark:border-amber-900 dark:bg-amber-950/20">
       <FlaskConical className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
       <div>
         <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">Demo billing UI</p>
@@ -162,7 +162,7 @@ function DemoBanner() {
 function CurrentPlanCard() {
   const plan = PLANS.find((p) => p.id === CURRENT_PLAN)!;
   return (
-    <div className="panel rounded-2xl p-6">
+    <div className="panel rounded-lg p-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
@@ -195,7 +195,7 @@ function CurrentPlanCard() {
           { label: "Next invoice", value: "$49.00" },
           { label: "Renewal date", value: "Jun 1, 2026" }
         ].map(({ label, value }) => (
-          <div key={label} className="rounded-xl border border-border bg-muted/50 px-4 py-3">
+          <div key={label} className="rounded-lg border border-border bg-muted/50 px-4 py-3">
             <p className="text-[11px] font-medium text-subtle">{label}</p>
             <p className="mt-1 text-sm font-semibold">{value}</p>
           </div>
@@ -219,7 +219,7 @@ function UsageSection() {
           const isNearLimit = pct >= 85;
           const isAtLimit = pct >= 100;
           return (
-            <div key={item.label} className="panel rounded-xl p-4">
+            <div key={item.label} className="panel rounded-lg p-4">
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
                   <Icon className="h-4 w-4 text-subtle" />
@@ -254,10 +254,10 @@ function PlanCard({ plan, isCurrent }: { plan: (typeof PLANS)[number]; isCurrent
   return (
     <div
       className={cn(
-        "relative flex flex-col rounded-2xl border p-6 transition",
+        "relative flex flex-col rounded-lg border p-6 transition",
         isCurrent
-          ? "border-brand-500 bg-brand-50/30 dark:bg-brand-950/10 shadow-glow"
-          : "border-border hover:border-brand-300"
+          ? "border-brand-500 bg-brand-50/30 dark:bg-brand-500/10 shadow-soft"
+          : "border-border hover:border-brand-500/45"
       )}
     >
       {plan.badge && (
@@ -271,7 +271,7 @@ function PlanCard({ plan, isCurrent }: { plan: (typeof PLANS)[number]; isCurrent
 
       {isCurrent && (
         <div className="absolute right-4 top-4">
-          <Badge className="border-brand-200 bg-brand-50 text-brand-700 dark:border-brand-900 dark:bg-brand-950/40 dark:text-brand-200">
+          <Badge className="border-brand-200 bg-brand-50 text-brand-700 dark:border-brand-500/30 dark:bg-brand-500/10 dark:text-brand-300">
             <BadgeCheck className="h-3 w-3" />
             Current
           </Badge>
@@ -375,7 +375,7 @@ function InvoicesSection() {
           Download all
         </Button>
       </div>
-      <div className="panel overflow-hidden rounded-2xl">
+      <div className="panel overflow-hidden rounded-lg">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>

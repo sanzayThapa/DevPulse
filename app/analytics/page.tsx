@@ -11,7 +11,7 @@ const SECTIONS = [
   { href: "/analytics/revenue", label: "Revenue Analytics", description: "MRR, ARR, plan breakdown, churn, and ARPU", icon: TrendingUp, color: "text-emerald-500" },
   { href: "/analytics/api-performance", label: "API Performance", description: "Latency percentiles, throughput, endpoint health", icon: Zap, color: "text-amber-500" },
   { href: "/analytics/errors", label: "Error Monitoring", description: "Error events, types, resolution status", icon: AlertTriangle, color: "text-red-500" },
-  { href: "/analytics/user-activity", label: "User Activity", description: "DAU/WAU/MAU, feature adoption, session patterns", icon: Activity, color: "text-violet-500" }
+  { href: "/analytics/user-activity", label: "User Activity", description: "DAU/WAU/MAU, feature adoption, session patterns", icon: Activity, color: "text-brand-500" }
 ];
 
 export default function AnalyticsPage() {
@@ -29,9 +29,9 @@ export default function AnalyticsPage() {
             <Link
               key={section.href}
               href={section.href}
-              className="group panel flex items-start gap-4 rounded-xl p-4 transition hover:shadow-md hover:border-brand-300"
+              className="group panel flex items-start gap-4 rounded-lg p-4 transition-colors hover:border-brand-500/35"
             >
-              <div className="mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-border bg-muted">
+              <div className="mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-md border border-border bg-muted">
                 <Icon className={`h-5 w-5 ${section.color}`} />
               </div>
               <div className="min-w-0 flex-1">
@@ -44,9 +44,9 @@ export default function AnalyticsPage() {
         })}
         <Link
           href="/dashboard"
-          className="group panel flex items-start gap-4 rounded-xl p-4 transition hover:shadow-md hover:border-brand-300"
+          className="group panel flex items-start gap-4 rounded-lg p-4 transition-colors hover:border-brand-500/35"
         >
-          <div className="mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-border bg-muted">
+          <div className="mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-md border border-border bg-muted">
             <BarChart3 className="h-5 w-5 text-subtle" />
           </div>
           <div className="min-w-0 flex-1">

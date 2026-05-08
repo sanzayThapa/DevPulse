@@ -35,7 +35,7 @@ export function UsersList() {
         {users.map((user) => (
           <div key={user.id} className="grid gap-4 p-5 transition hover:bg-muted/35 md:grid-cols-[1.4fr_.7fr_.7fr_.7fr_auto] md:items-center">
             <div className="flex items-center gap-3">
-              <div className="grid h-11 w-11 place-items-center rounded-full bg-muted font-bold text-brand-600 dark:text-brand-100">{user.avatar}</div>
+              <div className="grid h-11 w-11 place-items-center rounded-md bg-muted font-semibold text-brand-600 dark:text-brand-400">{user.avatar}</div>
               <div>
                 <p className="font-semibold">{user.name}</p>
                 <p className="text-sm text-subtle">{user.email}</p>

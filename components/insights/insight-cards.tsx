@@ -41,7 +41,7 @@ function DeltaIcon({ delta, type }: { delta?: number; type: InsightCard["type"] 
 function InsightCardItem({ card }: { card: InsightCard }) {
   const styles = TYPE_STYLES[card.type];
   return (
-    <div className={cn("rounded-xl border p-4 transition hover:shadow-md", styles.border, styles.bg)}>
+    <div className={cn("rounded-lg border p-4 transition-colors hover:border-brand-500/30", styles.border, styles.bg)}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
@@ -51,7 +51,7 @@ function InsightCardItem({ card }: { card: InsightCard }) {
           <p className="mt-1.5 text-xs leading-relaxed text-subtle">{card.body}</p>
         </div>
         {card.metric && (
-          <span className={cn("flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold", styles.badge)}>
+          <span className={cn("flex shrink-0 items-center gap-1 rounded-md px-2.5 py-1 text-xs font-semibold", styles.badge)}>
             <DeltaIcon delta={card.delta} type={card.type} />
             {card.metric}
           </span>
@@ -67,7 +67,7 @@ export function InsightCards() {
       <div className="mb-3 flex items-center gap-2">
         <Sparkles className="h-4 w-4 text-brand-500" />
         <h2 className="text-sm font-semibold">AI Insights</h2>
-        <span className="rounded-full border border-brand-200 bg-brand-50 px-2 py-0.5 text-[11px] font-semibold text-brand-700 dark:border-brand-900 dark:bg-brand-950/40 dark:text-brand-200">
+        <span className="rounded-md border border-brand-500/25 bg-brand-500/10 px-2 py-0.5 text-[11px] font-semibold text-brand-700 dark:text-brand-300">
           6 signals
         </span>
       </div>
@@ -85,7 +85,7 @@ export function InsightAlert() {
   if (critical.length === 0) return null;
   const first = critical[0];
   return (
-    <div className="mb-4 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50/60 px-4 py-3 dark:border-amber-900 dark:bg-amber-950/20">
+    <div className="mb-4 flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50/60 px-4 py-3 dark:border-amber-900 dark:bg-amber-950/20">
       <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
       <div className="min-w-0">
         <p className="text-sm font-semibold">{first.title}</p>

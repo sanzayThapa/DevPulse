@@ -1,6 +1,7 @@
 "use client";
 
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { chartTheme } from "@/components/charts/chart-theme";
 import type { ApiEndpoint } from "@/types/analytics";
 
 export function EndpointBarChart({ data, metric }: { data: ApiEndpoint[]; metric: "avgLatency" | "requestsPerMin" | "errorRate" }) {
@@ -12,9 +13,9 @@ export function EndpointBarChart({ data, metric }: { data: ApiEndpoint[]; metric
   }));
 
   const COLORS: Record<typeof metric, string> = {
-    avgLatency: "#06b6d4",
-    requestsPerMin: "#10b981",
-    errorRate: "#ef4444"
+    avgLatency: chartTheme.accent,
+    requestsPerMin: chartTheme.accentSoft,
+    errorRate: "#64748B"
   };
 
   const LABELS: Record<typeof metric, string> = {
@@ -26,18 +27,18 @@ export function EndpointBarChart({ data, metric }: { data: ApiEndpoint[]; metric
   return (
     <ResponsiveContainer width="100%" height="100%">
       <BarChart data={formatted} layout="vertical" margin={{ left: 8, right: 24, top: 8, bottom: 8 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.22)" horizontal={false} />
-        <XAxis type="number" tickLine={false} axisLine={false} tick={{ fill: "#94a3b8", fontSize: 11 }} />
+        <CartesianGrid strokeDasharray="3 3" stroke={chartTheme.grid} horizontal={false} />
+        <XAxis type="number" tickLine={false} axisLine={false} tick={{ fill: chartTheme.muted, fontSize: 11 }} />
         <YAxis
           type="category"
           dataKey="name"
           tickLine={false}
           axisLine={false}
-          tick={{ fill: "#94a3b8", fontSize: 10 }}
+          tick={{ fill: chartTheme.muted, fontSize: 10 }}
           width={160}
         />
         <Tooltip
-          contentStyle={{ borderRadius: 12, border: "1px solid rgba(148,163,184,.25)", background: "rgba(15,23,42,.92)", color: "white" }}
+          contentStyle={chartTheme.tooltip}
           formatter={(value: number) => [metric === "errorRate" ? `${value}%` : metric === "avgLatency" ? `${value}ms` : value, LABELS[metric]]}
         />
         <Bar dataKey="value" name={LABELS[metric]} fill={COLORS[metric]} fillOpacity={0.85} radius={[0, 4, 4, 0]} />

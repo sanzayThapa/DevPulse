@@ -51,7 +51,7 @@ export function DashboardView({ mode = "dashboard" }: { mode?: "dashboard" | "an
         }
       >
         <div className="flex gap-2">
-          <Badge className="border-brand-100 bg-brand-50 text-brand-700 dark:border-brand-900 dark:bg-brand-950/40 dark:text-brand-100">
+          <Badge className="border-brand-500/25 bg-brand-500/10 text-brand-700 dark:text-brand-300">
             <Activity className="h-3.5 w-3.5" />
             refresh {tick}
           </Badge>

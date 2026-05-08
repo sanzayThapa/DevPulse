@@ -38,7 +38,7 @@ function ExportModal({ data, onClose }: { data: Report[]; onClose: () => void })
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="fixed inset-0 bg-ink-950/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-lg rounded-2xl border border-border bg-panel shadow-2xl">
+      <div className="relative w-full max-w-lg rounded-lg border border-border bg-panel shadow-elevated">
         <div className="flex items-center justify-between border-b border-border px-6 py-4">
           <div className="flex items-center gap-2">
             <Download className="h-4 w-4 text-subtle" />
@@ -57,7 +57,7 @@ function ExportModal({ data, onClose }: { data: Report[]; onClose: () => void })
               <button
                 key={f}
                 onClick={() => setFormat(f)}
-                className={cn("rounded-xl border px-4 py-3 text-left transition", format === f ? "border-brand-500 bg-brand-50/50 dark:bg-brand-950/20" : "border-border hover:border-brand-300")}
+                className={cn("rounded-lg border px-4 py-3 text-left transition", format === f ? "border-brand-500 bg-brand-50/50 dark:bg-brand-500/10" : "border-border hover:border-brand-500/45")}
               >
                 <p className="text-sm font-semibold uppercase">{f}</p>
                 <p className="mt-0.5 text-xs text-subtle">
@@ -73,7 +73,7 @@ function ExportModal({ data, onClose }: { data: Report[]; onClose: () => void })
             {data.map((report) => (
               <label
                 key={report.id}
-                className={cn("flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2.5 transition", selected.includes(report.id) ? "border-brand-500 bg-brand-50/40 dark:bg-brand-950/20" : "border-border hover:border-brand-300")}
+                className={cn("flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2.5 transition", selected.includes(report.id) ? "border-brand-500 bg-brand-50/40 dark:bg-brand-500/10" : "border-border hover:border-brand-500/45")}
               >
                 <input
                   type="checkbox"
@@ -160,7 +160,7 @@ export default function ReportsPage() {
       {showPreview && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="fixed inset-0 bg-ink-950/60 backdrop-blur-sm" onClick={() => setShowPreview(null)} />
-          <div className="relative w-full max-w-md rounded-2xl border border-border bg-panel shadow-2xl">
+          <div className="relative w-full max-w-md rounded-lg border border-border bg-panel shadow-elevated">
             <div className="flex items-center justify-between border-b border-border px-6 py-4">
               <div className="flex items-center gap-2">
                 <Eye className="h-4 w-4 text-subtle" />

@@ -95,18 +95,18 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-40 w-72 border-r border-border bg-panel/95 px-4 py-5 backdrop-blur-xl transition-transform lg:translate-x-0 flex flex-col",
+          "fixed inset-y-0 left-0 z-40 flex w-72 flex-col border-r border-border bg-panel px-4 py-5 transition-transform lg:translate-x-0",
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         {/* Logo */}
         <div className="flex items-center justify-between">
           <Link href="/dashboard" className="flex items-center gap-3" onClick={() => setSidebarOpen(false)}>
-            <span className="grid h-10 w-10 place-items-center rounded-xl bg-foreground text-canvas dark:bg-white dark:text-ink-950">
+            <span className="grid h-10 w-10 place-items-center rounded-lg border border-brand-500/30 bg-brand-500 text-white shadow-sm">
               <Gauge className="h-5 w-5" />
             </span>
             <div>
-              <p className="text-sm font-bold">DevPulse Cloud</p>
+              <p className="text-sm font-semibold">DevPulse Cloud</p>
               <p className="text-xs text-subtle">Analytics platform</p>
             </div>
           </Link>
@@ -118,7 +118,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         {/* Search shortcut */}
         <button
           onClick={() => { setPaletteOpen(true); setSidebarOpen(false); }}
-          className="mt-5 flex h-9 w-full items-center gap-2 rounded-lg border border-border bg-muted/50 px-3 text-xs text-subtle transition hover:border-brand-400 hover:text-foreground"
+          className="mt-6 flex h-9 w-full items-center gap-2 rounded-md border border-border bg-muted/45 px-3 text-xs text-subtle transition hover:border-brand-500/50 hover:text-foreground"
         >
           <Search className="h-3.5 w-3.5" />
           <span className="flex-1 text-left">Search or jump to…</span>
@@ -136,7 +136,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 <div key={item.href}>
                   <button
                     className={cn(
-                      "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-subtle transition hover:bg-muted hover:text-foreground",
+                    "flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-subtle transition hover:bg-muted hover:text-foreground",
                       active && "bg-muted text-foreground"
                     )}
                     onClick={() => setAnalyticsOpen((v) => !v)}
@@ -150,7 +150,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                       <Link
                         href="/analytics"
                         onClick={() => setSidebarOpen(false)}
-                        className={cn("flex items-center gap-2 rounded-lg px-2 py-2 text-xs font-medium text-subtle transition hover:bg-muted hover:text-foreground", pathname === "/analytics" && "bg-muted text-foreground")}
+                        className={cn("flex items-center gap-2 rounded-md px-2 py-2 text-xs font-medium text-subtle transition hover:bg-muted hover:text-foreground", pathname === "/analytics" && "bg-muted text-foreground")}
                       >
                         <BarChart3 className="h-3.5 w-3.5" />
                         Overview
@@ -163,7 +163,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                             key={child.href}
                             href={child.href}
                             onClick={() => setSidebarOpen(false)}
-                            className={cn("flex items-center gap-2 rounded-lg px-2 py-2 text-xs font-medium text-subtle transition hover:bg-muted hover:text-foreground", cActive && "bg-muted text-foreground")}
+                            className={cn("flex items-center gap-2 rounded-md px-2 py-2 text-xs font-medium text-subtle transition hover:bg-muted hover:text-foreground", cActive && "bg-muted text-foreground")}
                           >
                             <CIcon className="h-3.5 w-3.5" />
                             {child.label}
@@ -180,7 +180,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <Link
                 href={item.href}
                 key={item.href}
-                className={cn("flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-subtle transition hover:bg-muted hover:text-foreground", active && "bg-muted text-foreground shadow-sm")}
+                className={cn("flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-subtle transition hover:bg-muted hover:text-foreground", active && "bg-muted text-foreground shadow-sm")}
                 onClick={() => setSidebarOpen(false)}
               >
                 <Icon className="h-4 w-4" />
@@ -191,9 +191,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </nav>
 
         {/* Role switcher + user card */}
-        <div className="mt-4 rounded-xl border border-border bg-muted/50 p-4">
+        <div className="mt-5 rounded-lg border border-border bg-muted/35 p-4">
           <div className="flex items-center gap-3">
-            <div className="grid h-10 w-10 place-items-center rounded-full bg-brand-500 text-sm font-bold text-white shrink-0">
+            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-md bg-brand-500 text-sm font-semibold text-white">
               {name.split(" ").map((part) => part[0]).join("").slice(0, 2)}
             </div>
             <div className="min-w-0">
@@ -206,9 +206,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <button
                 key={option}
                 className={cn(
-                  "focus-ring rounded-lg border px-2 py-1.5 text-[11px] font-semibold capitalize transition hover:bg-panel",
+                  "focus-ring rounded-md border px-2 py-1.5 text-[11px] font-semibold capitalize transition hover:bg-panel",
                   role === option
-                    ? "border-brand-500 bg-brand-50 text-brand-700 dark:bg-brand-500/15 dark:text-brand-100"
+                    ? "border-brand-500 bg-brand-50 text-brand-700 dark:bg-brand-500/15 dark:text-brand-300"
                     : "border-border text-subtle"
                 )}
                 onClick={() => setRole(option)}
@@ -221,23 +221,23 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </aside>
 
       {sidebarOpen && (
-        <button className="fixed inset-0 z-30 bg-ink-950/50 lg:hidden" onClick={() => setSidebarOpen(false)} aria-label="Close overlay" />
+        <button className="fixed inset-0 z-30 bg-ink-950/60 lg:hidden" onClick={() => setSidebarOpen(false)} aria-label="Close overlay" />
       )}
 
       <div className="lg:pl-72">
-        <header className="sticky top-0 z-20 border-b border-border bg-canvas/80 backdrop-blur-xl">
+        <header className="sticky top-0 z-20 border-b border-border bg-canvas/90 backdrop-blur-md">
           <div className="flex h-16 items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
             <div className="flex items-center gap-3">
-              <button className="focus-ring rounded-lg border border-border bg-panel p-2 lg:hidden" onClick={() => setSidebarOpen(true)} aria-label="Open navigation">
+              <button className="focus-ring rounded-md border border-border bg-panel p-2 lg:hidden" onClick={() => setSidebarOpen(true)} aria-label="Open navigation">
                 <Menu className="h-5 w-5" />
               </button>
-              <Badge className="border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-300">
-                <span className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_0_4px_rgba(16,185,129,0.15)]" />
+              <Badge className="border-brand-500/25 bg-brand-500/10 text-brand-700 dark:text-brand-300">
+                <span className="h-2 w-2 rounded-full bg-brand-500" />
                 Live
               </Badge>
               <button
                 onClick={() => setPaletteOpen(true)}
-                className="hidden items-center gap-2 rounded-lg border border-border bg-muted/50 px-3 py-1.5 text-xs text-subtle transition hover:border-brand-400 hover:text-foreground sm:flex"
+                className="hidden items-center gap-2 rounded-md border border-border bg-muted/45 px-3 py-1.5 text-xs text-subtle transition hover:border-brand-500/50 hover:text-foreground sm:flex"
               >
                 <Search className="h-3.5 w-3.5" />
                 Search…

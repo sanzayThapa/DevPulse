@@ -13,7 +13,7 @@ function Select({ label, value, onChange, options }: { label: string; value: str
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="focus-ring h-10 rounded-lg border border-border bg-panel px-3 text-sm font-medium text-foreground"
+        className="focus-ring h-10 rounded-md border border-border bg-panel px-3 text-sm font-medium text-foreground"
       >
         {options.map((option) => (
           <option key={option} value={option}>
@@ -27,15 +27,15 @@ function Select({ label, value, onChange, options }: { label: string; value: str
 
 export function FilterBar({ filters, onChange }: { filters: Filters; onChange: (filters: Filters) => void }) {
   return (
-    <div className="panel mb-6 rounded-xl p-4">
+    <div className="panel mb-8 rounded-lg p-4">
       <div className="grid gap-3 md:grid-cols-[1.1fr_1fr_1fr_1fr]">
         <label className="flex min-w-0 flex-col gap-1 text-xs font-medium text-subtle">
           Date range
-          <div className="flex rounded-lg border border-border bg-panel p-1">
+          <div className="flex rounded-md border border-border bg-panel p-1">
             {ranges.map((range) => (
               <button
                 key={range}
-                className={`focus-ring flex h-8 flex-1 items-center justify-center gap-1 rounded-md text-sm font-semibold transition ${filters.dateRange === range ? "bg-foreground text-canvas dark:bg-white dark:text-ink-950" : "text-subtle hover:text-foreground"}`}
+                className={`focus-ring flex h-8 flex-1 items-center justify-center gap-1 rounded text-sm font-semibold transition ${filters.dateRange === range ? "bg-brand-500 text-white" : "text-subtle hover:bg-muted hover:text-foreground"}`}
                 onClick={() => onChange({ ...filters, dateRange: range })}
               >
                 {range === "24h" ? <CalendarDays className="h-3.5 w-3.5" /> : null}

@@ -32,7 +32,7 @@ export default function ErrorMonitoringPage() {
       <PageHeader title="Error Monitoring" description="Live error events, types, impacted endpoints, and resolution status." />
 
       {activeCount > 0 && (
-        <div className="mb-4 flex items-center gap-3 rounded-xl border border-red-200 bg-red-50/60 px-4 py-3 dark:border-red-900 dark:bg-red-950/20">
+        <div className="mb-4 flex items-center gap-3 rounded-lg border border-red-200 bg-red-50/60 px-4 py-3 dark:border-red-900 dark:bg-red-950/20">
           <AlertTriangle className="h-4 w-4 shrink-0 text-red-500" />
           <div>
             <p className="text-sm font-semibold text-red-700 dark:text-red-300">{activeCount} active error{activeCount !== 1 ? "s" : ""} require attention</p>
@@ -42,16 +42,16 @@ export default function ErrorMonitoringPage() {
       )}
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <div className="panel rounded-xl p-4">
+        <div className="panel rounded-lg p-4">
           <div className="flex items-center gap-2"><XCircle className="h-4 w-4 text-red-500" /><p className="text-xs font-medium text-subtle">Active errors</p></div>
           <p className="mt-2 text-2xl font-bold text-red-600 dark:text-red-400">{activeCount}</p>
         </div>
-        <div className="panel rounded-xl p-4">
+        <div className="panel rounded-lg p-4">
           <div className="flex items-center gap-2"><AlertTriangle className="h-4 w-4 text-subtle" /><p className="text-xs font-medium text-subtle">Total occurrences</p></div>
           <p className="mt-2 text-2xl font-bold">{totalErrors.toLocaleString()}</p>
           <p className="mt-0.5 text-xs text-subtle">Last 24 hours</p>
         </div>
-        <div className="panel rounded-xl p-4">
+        <div className="panel rounded-lg p-4">
           <div className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-emerald-500" /><p className="text-xs font-medium text-subtle">Error rate</p></div>
           <p className="mt-2 text-2xl font-bold">0.42%</p>
           <p className="mt-0.5 text-xs text-emerald-600 dark:text-emerald-400">−0.08% vs yesterday</p>
@@ -64,7 +64,7 @@ export default function ErrorMonitoringPage() {
         </ChartCard>
       </div>
 
-      <div className="mt-6 panel rounded-xl overflow-hidden">
+      <div className="mt-6 panel rounded-lg overflow-hidden">
         <div className="flex items-center justify-between border-b border-border px-6 py-4">
           <div>
             <p className="text-sm font-semibold">Error Events</p>

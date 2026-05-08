@@ -3,21 +3,21 @@
 @tailwind utilities;
 
 :root {
-  --canvas: 210 40% 98%;
+  --canvas: 210 40% 99%;
   --panel: 0 0% 100%;
-  --muted: 210 40% 96%;
+  --muted: 210 24% 96%;
   --border: 214 32% 91%;
   --foreground: 222 47% 11%;
-  --subtle: 215 16% 47%;
+  --subtle: 215 14% 46%;
 }
 
 .dark {
-  --canvas: 224 28% 7%;
-  --panel: 224 22% 10%;
-  --muted: 223 20% 15%;
-  --border: 222 18% 19%;
+  --canvas: 222 47% 11%;
+  --panel: 221 39% 12%;
+  --muted: 220 27% 16%;
+  --border: 217 19% 25%;
   --foreground: 210 40% 98%;
-  --subtle: 215 18% 68%;
+  --subtle: 215 20% 68%;
 }
 
 * {
@@ -30,23 +30,21 @@ html {
 
 body {
   min-height: 100vh;
-  background:
-    radial-gradient(circle at 14% 0%, rgba(6, 182, 212, 0.12), transparent 32rem),
-    radial-gradient(circle at 82% 10%, rgba(16, 185, 129, 0.1), transparent 30rem),
-    hsl(var(--canvas));
+  background: hsl(var(--canvas));
   color: hsl(var(--foreground));
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
 ::selection {
-  background: rgba(6, 182, 212, 0.28);
+  background: rgba(16, 185, 129, 0.28);
 }
 
 @layer components {
   .panel {
-    @apply border border-border bg-panel/80 shadow-soft backdrop-blur-xl;
+    @apply border border-border bg-panel shadow-soft;
   }
 
   .focus-ring {
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas;
   }
 }

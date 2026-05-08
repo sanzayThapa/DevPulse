@@ -45,19 +45,19 @@ export const ROLE_META: Record<Role, { label: string; description: string; color
     label: "Admin",
     description: "Full platform access",
     color:
-      "text-brand-700 bg-brand-50 border-brand-200 dark:text-brand-100 dark:bg-brand-950/40 dark:border-brand-900"
+      "text-brand-700 bg-brand-50 border-brand-200 dark:text-brand-300 dark:bg-brand-500/10 dark:border-brand-500/30"
   },
   manager: {
     label: "Manager",
     description: "Analytics, reports & settings",
     color:
-      "text-violet-700 bg-violet-50 border-violet-200 dark:text-violet-200 dark:bg-violet-950/40 dark:border-violet-900"
+      "text-brand-700 bg-brand-50 border-brand-200 dark:text-brand-300 dark:bg-brand-500/10 dark:border-brand-500/30"
   },
   viewer: {
     label: "Viewer",
     description: "Read-only dashboards",
     color:
-      "text-slate-600 bg-slate-50 border-slate-200 dark:text-slate-300 dark:bg-slate-900/40 dark:border-slate-700"
+      "text-subtle bg-muted border-border"
   }
 };
 

@@ -120,8 +120,8 @@ export function CommandPalette({ open, onClose }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-[12vh] px-4">
-      <div className="fixed inset-0 bg-ink-950/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-xl rounded-2xl border border-border bg-panel shadow-2xl overflow-hidden">
+      <div className="fixed inset-0 bg-ink-950/70 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative w-full max-w-xl overflow-hidden rounded-lg border border-border bg-panel shadow-elevated">
         <div className="flex items-center gap-3 border-b border-border px-4 py-3">
           <Search className="h-4 w-4 shrink-0 text-subtle" />
           <input
@@ -153,18 +153,18 @@ export function CommandPalette({ open, onClose }: Props) {
                       onClick={cmd.action}
                       className={cn(
                         "flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm transition",
-                        isSelected ? "bg-muted" : "hover:bg-muted/50"
+                        isSelected ? "bg-muted" : "hover:bg-muted/45"
                       )}
                     >
-                      <span className={cn("grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-border", isSelected && "border-brand-500/40 bg-brand-50 dark:bg-brand-950/40")}>
-                        <Icon className={cn("h-3.5 w-3.5", isSelected ? "text-brand-600 dark:text-brand-300" : "text-subtle")} />
+                      <span className={cn("grid h-8 w-8 shrink-0 place-items-center rounded-md border border-border", isSelected && "border-brand-500/40 bg-brand-50 dark:bg-brand-500/10")}>
+                        <Icon className={cn("h-3.5 w-3.5", isSelected ? "text-brand-600 dark:text-brand-400" : "text-subtle")} />
                       </span>
                       <span className="min-w-0">
                         <span className="block font-medium text-foreground">{cmd.label}</span>
                         {cmd.description && <span className="block truncate text-xs text-subtle">{cmd.description}</span>}
                       </span>
                       {cmd.group === "Roles" && cmd.label.toLowerCase().includes(role) && (
-                        <span className="ml-auto shrink-0 rounded-full border border-brand-200 bg-brand-50 px-2 py-0.5 text-[11px] font-semibold text-brand-700 dark:border-brand-900 dark:bg-brand-950/40 dark:text-brand-200">
+                        <span className="ml-auto shrink-0 rounded-md border border-brand-500/25 bg-brand-500/10 px-2 py-0.5 text-[11px] font-semibold text-brand-700 dark:text-brand-300">
                           active
                         </span>
                       )}

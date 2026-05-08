@@ -14,7 +14,7 @@ import type { Filters } from "@/types/analytics";
 
 function StatCard({ label, value, sub, icon: Icon }: { label: string; value: string; sub?: string; icon: React.ElementType }) {
   return (
-    <div className="panel rounded-xl p-4">
+    <div className="panel rounded-lg p-4">
       <div className="flex items-center gap-2">
         <Icon className="h-4 w-4 text-subtle" />
         <p className="text-xs font-medium text-subtle">{label}</p>
@@ -53,7 +53,7 @@ export default function TrafficAnalyticsPage() {
         </ChartCard>
       </div>
 
-      <div className="mt-6 panel rounded-xl overflow-hidden">
+      <div className="mt-6 panel rounded-lg overflow-hidden">
         <div className="border-b border-border px-6 py-4">
           <p className="text-sm font-semibold">Top Pages</p>
           <p className="text-xs text-subtle mt-0.5">Ranked by page views in the selected period</p>

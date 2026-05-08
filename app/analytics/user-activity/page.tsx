@@ -8,6 +8,7 @@ import { ChartCard } from "@/components/charts/chart-card";
 import { ActiveAreaChart } from "@/components/charts/active-area-chart";
 import { activeUsersData, featureUsage, userActivityData } from "@/lib/data";
 import { FilterBar } from "@/components/filters/filter-bar";
+import { chartTheme } from "@/components/charts/chart-theme";
 import { Line, LineChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, Legend } from "recharts";
 import type { Filters } from "@/types/analytics";
 
@@ -15,17 +16,17 @@ function DauChart({ data }: { data: typeof userActivityData }) {
   return (
     <ResponsiveContainer width="100%" height="100%">
       <LineChart data={data} margin={{ left: -12, right: 12, top: 8 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.22)" />
-        <XAxis dataKey="date" tickLine={false} axisLine={false} tick={{ fill: "#94a3b8", fontSize: 11 }} />
-        <YAxis tickLine={false} axisLine={false} tick={{ fill: "#94a3b8", fontSize: 12 }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
+        <CartesianGrid strokeDasharray="3 3" stroke={chartTheme.grid} />
+        <XAxis dataKey="date" tickLine={false} axisLine={false} tick={{ fill: chartTheme.muted, fontSize: 11 }} />
+        <YAxis tickLine={false} axisLine={false} tick={{ fill: chartTheme.muted, fontSize: 12 }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
         <Tooltip
-          contentStyle={{ borderRadius: 12, border: "1px solid rgba(148,163,184,.25)", background: "rgba(15,23,42,.92)", color: "white" }}
+          contentStyle={chartTheme.tooltip}
           formatter={(value: number, name: string) => [value.toLocaleString(), name.toUpperCase()]}
         />
         <Legend />
-        <Line type="monotone" dataKey="dau" name="dau" stroke="#06b6d4" strokeWidth={3} dot={false} />
-        <Line type="monotone" dataKey="wau" name="wau" stroke="#10b981" strokeWidth={2} dot={false} strokeDasharray="5 3" />
-        <Line type="monotone" dataKey="mau" name="mau" stroke="#6366f1" strokeWidth={2} dot={false} strokeDasharray="3 3" />
+        <Line type="monotone" dataKey="dau" name="dau" stroke={chartTheme.accent} strokeWidth={2} dot={false} />
+        <Line type="monotone" dataKey="wau" name="wau" stroke={chartTheme.accentSoft} strokeWidth={2} dot={false} strokeDasharray="5 3" />
+        <Line type="monotone" dataKey="mau" name="mau" stroke="#64748B" strokeWidth={2} dot={false} strokeDasharray="3 3" />
       </LineChart>
     </ResponsiveContainer>
   );
@@ -43,22 +44,22 @@ export default function UserActivityPage() {
       <FilterBar filters={filters} onChange={setFilters} />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <div className="panel rounded-xl p-4">
+        <div className="panel rounded-lg p-4">
           <div className="flex items-center gap-2"><Activity className="h-4 w-4 text-subtle" /><p className="text-xs font-medium text-subtle">Daily Active Users</p></div>
           <p className="mt-2 text-2xl font-bold">{latest.dau.toLocaleString()}</p>
           <p className="mt-0.5 text-xs text-emerald-600 dark:text-emerald-400">+6.9% vs last week</p>
         </div>
-        <div className="panel rounded-xl p-4">
+        <div className="panel rounded-lg p-4">
           <div className="flex items-center gap-2"><Users className="h-4 w-4 text-subtle" /><p className="text-xs font-medium text-subtle">Weekly Active Users</p></div>
           <p className="mt-2 text-2xl font-bold">{latest.wau.toLocaleString()}</p>
           <p className="mt-0.5 text-xs text-emerald-600 dark:text-emerald-400">DAU/WAU: {dauWauRatio}%</p>
         </div>
-        <div className="panel rounded-xl p-4">
+        <div className="panel rounded-lg p-4">
           <div className="flex items-center gap-2"><Users className="h-4 w-4 text-subtle" /><p className="text-xs font-medium text-subtle">Monthly Active Users</p></div>
           <p className="mt-2 text-2xl font-bold">{latest.mau.toLocaleString()}</p>
           <p className="mt-0.5 text-xs text-subtle">DAU/MAU: {((latest.dau / latest.mau) * 100).toFixed(1)}%</p>
         </div>
-        <div className="panel rounded-xl p-4">
+        <div className="panel rounded-lg p-4">
           <div className="flex items-center gap-2"><Smartphone className="h-4 w-4 text-subtle" /><p className="text-xs font-medium text-subtle">Mobile Share</p></div>
           <p className="mt-2 text-2xl font-bold">44.2%</p>
           <p className="mt-0.5 text-xs text-subtle">of all sessions</p>
@@ -74,7 +75,7 @@ export default function UserActivityPage() {
         </ChartCard>
       </div>
 
-      <div className="mt-6 panel rounded-xl overflow-hidden">
+      <div className="mt-6 panel rounded-lg overflow-hidden">
         <div className="border-b border-border px-6 py-4">
           <p className="text-sm font-semibold">Feature Adoption</p>
           <p className="text-xs text-subtle mt-0.5">% of active users engaging with each feature</p>

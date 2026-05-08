@@ -17,11 +17,17 @@ const config: Config = {
         foreground: "hsl(var(--foreground))",
         subtle: "hsl(var(--subtle))",
         brand: {
-          50: "#ecfeff",
-          100: "#cffafe",
-          500: "#06b6d4",
-          600: "#0891b2",
-          700: "#0e7490"
+          50: "#ecfdf5",
+          100: "#d1fae5",
+          200: "#a7f3d0",
+          300: "#6ee7b7",
+          400: "#34d399",
+          500: "#10b981",
+          600: "#059669",
+          700: "#047857",
+          800: "#065f46",
+          900: "#064e3b",
+          950: "#022c22"
         },
         ink: {
           800: "#1f2937",
@@ -30,8 +36,8 @@ const config: Config = {
         }
       },
       boxShadow: {
-        soft: "0 18px 60px -32px rgba(15, 23, 42, 0.45)",
-        glow: "0 24px 80px -44px rgba(6, 182, 212, 0.55)"
+        soft: "0 16px 40px -28px rgba(0, 0, 0, 0.55)",
+        elevated: "0 24px 70px -42px rgba(0, 0, 0, 0.7)"
       },
       fontFamily: {
         sans: ["var(--font-inter)", "Inter", "ui-sans-serif", "system-ui"]

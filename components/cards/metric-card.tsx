@@ -24,11 +24,11 @@ export function MetricCard({ metric }: { metric: Metric }) {
     <Card className="p-4">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-sm text-subtle">{metric.label}</p>
-          <p className="mt-2 text-2xl font-bold tracking-normal">{formatMetric(metric.value, metric.unit)}</p>
+          <p className="text-xs font-medium uppercase tracking-[0.08em] text-subtle">{metric.label}</p>
+          <p className="mt-2 text-2xl font-semibold tracking-normal">{formatMetric(metric.value, metric.unit)}</p>
         </div>
-        <div className="grid h-10 w-10 place-items-center rounded-lg bg-muted">
-          <Icon className="h-5 w-5 text-brand-600 dark:text-brand-100" />
+        <div className="grid h-10 w-10 place-items-center rounded-md border border-border bg-muted/55">
+          <Icon className="h-5 w-5 text-brand-600 dark:text-brand-400" />
         </div>
       </div>
       <div className="mt-4 flex items-end justify-between gap-3">

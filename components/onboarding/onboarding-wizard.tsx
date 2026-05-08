@@ -46,7 +46,7 @@ export function OnboardingWizard() {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="fixed inset-0 bg-ink-950/70 backdrop-blur-sm" />
-      <div className="relative w-full max-w-lg rounded-2xl border border-border bg-panel shadow-2xl">
+      <div className="relative w-full max-w-lg rounded-lg border border-border bg-panel shadow-elevated">
         {/* Step indicator */}
         <div className="border-b border-border px-6 py-4">
           <div className="flex items-center gap-0">
@@ -70,7 +70,7 @@ export function OnboardingWizard() {
         <div className="px-6 py-6">
           {step === 0 && (
             <div>
-              <div className="mb-6 grid h-12 w-12 place-items-center rounded-xl bg-brand-500/10">
+              <div className="mb-6 grid h-12 w-12 place-items-center rounded-lg bg-brand-500/10">
                 <Gauge className="h-6 w-6 text-brand-500" />
               </div>
               <h2 className="text-xl font-bold">Create your workspace</h2>
@@ -103,8 +103,8 @@ export function OnboardingWizard() {
                       key={type.id}
                       onClick={() => setProjectType(type.id)}
                       className={cn(
-                        "rounded-xl border p-4 text-left transition hover:border-brand-400",
-                        isSelected ? "border-brand-500 bg-brand-50/50 dark:bg-brand-950/20" : "border-border"
+                        "rounded-lg border p-4 text-left transition hover:border-brand-500/45",
+                        isSelected ? "border-brand-500 bg-brand-50/50 dark:bg-brand-500/10" : "border-border"
                       )}
                     >
                       <Icon className={cn("h-5 w-5", isSelected ? "text-brand-500" : "text-subtle")} />
@@ -131,7 +131,7 @@ export function OnboardingWizard() {
                       onClick={() => toggleMetric(opt.id)}
                       className={cn(
                         "flex w-full items-center gap-3 rounded-lg border px-4 py-3 text-left transition",
-                        isSelected ? "border-brand-500 bg-brand-50/50 dark:bg-brand-950/20" : "border-border hover:border-brand-300"
+                        isSelected ? "border-brand-500 bg-brand-50/50 dark:bg-brand-500/10" : "border-border hover:border-brand-500/45"
                       )}
                     >
                       <Icon className={cn("h-4 w-4 shrink-0", isSelected ? "text-brand-500" : "text-subtle")} />
@@ -146,7 +146,7 @@ export function OnboardingWizard() {
 
           {step === 3 && (
             <div className="text-center">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-100 dark:bg-emerald-950/40">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-lg bg-emerald-100 dark:bg-emerald-950/40">
                 <Check className="h-8 w-8 text-emerald-500" />
               </div>
               <h2 className="text-xl font-bold">You&apos;re ready to go!</h2>
@@ -154,7 +154,7 @@ export function OnboardingWizard() {
                 <span className="font-semibold text-foreground">{workspace}</span> is configured with{" "}
                 {selectedMetrics.length} analytics section{selectedMetrics.length !== 1 ? "s" : ""}.
               </p>
-              <div className="mt-6 rounded-xl border border-border bg-muted/50 px-4 py-4 text-left">
+              <div className="mt-6 rounded-lg border border-border bg-muted/50 px-4 py-4 text-left">
                 <p className="text-xs font-semibold uppercase tracking-widest text-subtle">Workspace summary</p>
                 <div className="mt-3 space-y-1.5">
                   <div className="flex justify-between text-sm"><span className="text-subtle">Name</span><span className="font-medium">{workspace}</span></div>

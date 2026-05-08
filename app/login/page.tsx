@@ -37,37 +37,36 @@ export default function LoginPage() {
 
   return (
     <main className="grid min-h-screen lg:grid-cols-[1.05fr_.95fr]">
-      <section className="relative hidden overflow-hidden border-r border-border bg-ink-950 text-white lg:block">
-        <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(6,182,212,.28),transparent_38%),linear-gradient(45deg,rgba(16,185,129,.18),transparent_42%)]" />
-        <div className="relative flex h-full flex-col justify-between p-10">
+      <section className="relative hidden overflow-hidden border-r border-border bg-canvas text-white lg:block">
+        <div className="relative flex h-full flex-col justify-between p-12">
           <div className="flex items-center gap-3">
-            <span className="grid h-11 w-11 place-items-center rounded-xl bg-white text-ink-950">
+            <span className="grid h-11 w-11 place-items-center rounded-lg border border-brand-500/30 bg-brand-500 text-white shadow-sm">
               <Gauge className="h-5 w-5" />
             </span>
             <div>
-              <p className="font-bold">DevPulse Cloud</p>
-              <p className="text-sm text-slate-300">Production analytics platform</p>
+              <p className="font-semibold">DevPulse Cloud</p>
+              <p className="text-sm text-subtle">Production analytics platform</p>
             </div>
           </div>
 
           <div className="max-w-xl">
-            <Badge className="border-white/15 bg-white/10 text-cyan-100">
-              <span className="h-2 w-2 rounded-full bg-emerald-400" />
+            <Badge className="border-brand-500/25 bg-brand-500/10 text-brand-300">
+              <span className="h-2 w-2 rounded-full bg-brand-500" />
               Portfolio-ready · Enterprise-grade
             </Badge>
-            <h1 className="mt-6 text-5xl font-bold tracking-normal">
+            <h1 className="mt-6 text-5xl font-semibold leading-tight tracking-normal">
               Monitor the whole product pulse from one precise surface.
             </h1>
-            <p className="mt-5 text-lg leading-8 text-slate-300">
+            <p className="mt-5 text-base leading-7 text-subtle">
               Traffic, revenue, API reliability, error monitoring, and user activity — all in a polished analytics platform with role-based access and AI insights.
             </p>
           </div>
 
           <div className="grid grid-cols-3 gap-3">
             {["184k visitors", "$92k MRR", "0.42% errors"].map((item) => (
-              <div key={item} className="rounded-xl border border-white/10 bg-white/[0.08] p-4 backdrop-blur">
+              <div key={item} className="rounded-lg border border-border bg-panel p-4 shadow-soft">
                 <p className="text-sm font-semibold">{item}</p>
-                <p className="mt-1 text-xs text-slate-400">Live demo signal</p>
+                <p className="mt-1 text-xs text-subtle">Live demo signal</p>
               </div>
             ))}
           </div>
@@ -75,18 +74,18 @@ export default function LoginPage() {
       </section>
 
       <section className="flex items-center justify-center p-6">
-        <form onSubmit={handleSubmit(onSubmit)} className="panel w-full max-w-md rounded-2xl p-6 sm:p-8">
+        <form onSubmit={handleSubmit(onSubmit)} className="panel w-full max-w-md rounded-lg p-6 sm:p-8">
           <div className="mb-8">
-            <div className="mb-5 grid h-12 w-12 place-items-center rounded-xl bg-foreground text-canvas dark:bg-white dark:text-ink-950 lg:hidden">
+            <div className="mb-5 grid h-12 w-12 place-items-center rounded-lg bg-brand-500 text-white lg:hidden">
               <Gauge className="h-6 w-6" />
             </div>
-            <h2 className="text-2xl font-bold tracking-normal">Welcome back</h2>
+            <h2 className="text-2xl font-semibold tracking-normal">Welcome back</h2>
             <p className="mt-2 text-sm text-subtle">Choose a demo role and enter the dashboard.</p>
           </div>
 
           <label className="block text-sm font-medium">
             Email
-            <span className="mt-2 flex h-11 items-center gap-2 rounded-lg border border-border bg-muted/50 px-3">
+            <span className="mt-2 flex h-11 items-center gap-2 rounded-md border border-border bg-muted/45 px-3">
               <Mail className="h-4 w-4 text-subtle" />
               <input className="w-full bg-transparent text-sm outline-none" type="email" {...register("email", { required: true })} />
             </span>
@@ -102,8 +101,8 @@ export default function LoginPage() {
                   <label
                     key={option}
                     className={cn(
-                      "flex cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 transition",
-                      isSelected ? "border-brand-500 bg-brand-50/50 dark:bg-brand-950/20" : "border-border hover:border-brand-300"
+                      "flex cursor-pointer items-center gap-3 rounded-lg border px-4 py-3 transition",
+                      isSelected ? "border-brand-500 bg-brand-50/50 dark:bg-brand-500/10" : "border-border hover:border-brand-500/45"
                     )}
                   >
                     <input className="sr-only" type="radio" value={option} {...register("role")} />
