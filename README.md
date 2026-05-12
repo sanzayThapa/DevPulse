@@ -1,83 +1,170 @@
 # DevPulse
 
-DevPulse is a polished portfolio SaaS dashboard for monitoring app performance, traffic, revenue, API usage, error rate, conversion, and user activity. It is built as a frontend-first Next.js product surface with realistic mock analytics data and a clean structure that can later connect to a Django REST API.
+DevPulse is a frontend-first SaaS analytics platform built with Next.js. It presents a polished dark-mode product surface for traffic, revenue, API reliability, reports, billing, team activity, role-based access, and workspace-level mock data.
 
-## Features
+All data is local mock data. No backend is required to run the app.
 
-- Responsive SaaS layout with sidebar and top navigation
-- Dark and light mode with `localStorage` persistence
-- Mock authentication with `admin` and `user` roles
-- Demo role switching from the navbar and settings page
-- Real-time-looking analytics updates every 5 seconds
-- Live status badge and loading skeletons
-- Metric cards for visitors, revenue, API requests, error rate, active users, and conversion rate
-- Recharts visualizations:
-  - Traffic line chart
-  - Active users area chart
-  - Revenue by category bar chart
-  - Traffic source donut chart
-- Analytics filters for date range, category, traffic source, and project/app
-- Reports page using TanStack Table with sortable columns
-- CSV export and PDF export placeholder
-- Admin-only user management view
-- Settings page with profile, theme, notifications, API key, and role controls
+## Highlights
+
+- Premium modern SaaS UI inspired by Linear, Vercel, Stripe, and Notion
+- Role-based product experiences for `admin`, `manager`, and `viewer`
+- Workspace switcher with persisted workspace selection
+- Live-updating mock dashboard data
+- Analytics sections for traffic, revenue, API performance, errors, and user activity
+- Reports table with sorting and role-aware export controls
+- Admin-only users, billing, team activity, and audit logs
+- Manager-focused team performance and notifications
+- Viewer read-only dashboard, reports, analytics, and profile flow
+- Command palette with keyboard navigation
+- Notification panel and full notifications page
+- Onboarding modal for first demo login
+- Dark/light theme stored in `localStorage`
+- Responsive layout across desktop and mobile
 
 ## Tech Stack
 
-- Next.js
+- Next.js 15 App Router
+- React 19
 - TypeScript
 - Tailwind CSS
 - Recharts
 - TanStack Table
 - React Hook Form
-- Lucide React icons
+- Lucide React
+- `clsx` + `tailwind-merge`
 
-## Screenshots
+## Getting Started
 
-Add screenshots here after running the app:
-
-- Dashboard overview
-- Analytics charts
-- Reports table
-- Users admin view
-- Settings page
-- Mobile layout
-
-## Installation
+Install dependencies:
 
 ```bash
 npm install
+```
+
+Run the development server:
+
+```bash
 npm run dev
 ```
 
-Open `http://localhost:3000` in your browser. The app redirects to `/dashboard`; unauthenticated users are sent to `/login`.
+Open:
 
-## Demo Credentials
+```text
+http://localhost:3000
+```
 
-No real credentials are required. Use the login page to choose:
+Build for production:
 
-- `admin`: full dashboard and user management access
-- `user`: dashboard access with limited user management permissions
+```bash
+npm run build
+```
 
-Mock auth state, role, and theme preference are stored in `localStorage`.
+## Demo Access
 
-## Django REST API Readiness
+No real credentials are required. Use the login page to choose a demo role:
 
-The data layer lives in `lib/data.ts`, and shared TypeScript contracts live in `types/analytics.ts`. Replace the mock functions with fetchers that call Django REST endpoints such as:
+- `admin`: full platform access
+- `manager`: analytics, reports, notifications, settings, and team performance
+- `viewer`: read-only dashboard, analytics, reports, and profile
 
-- `GET /api/metrics/`
-- `GET /api/traffic/`
-- `GET /api/revenue/`
-- `GET /api/reports/`
-- `GET /api/users/`
+Demo auth state is stored in `localStorage` under `devpulse-auth`.
 
-The filter shape already maps cleanly to query parameters for date range, category, source, and project.
+## Workspaces
+
+The top navbar includes a workspace switcher. The selected workspace is stored in `localStorage` under `devpulse-workspace`.
+
+Available demo workspaces:
+
+- Production
+- Marketing
+- Mobile App
+- Staging
+
+Changing workspace updates dashboard mock data, including metrics, traffic, active users, revenue charts, and role-specific widgets.
+
+## Role-Based Experiences
+
+### Admin
+
+Admin navigation includes dashboard, analytics, API performance, error monitoring, users, team activity, billing, reports, audit logs, and settings.
+
+Admin dashboard widgets include revenue, user growth, API usage, system health, subscriptions, critical errors, and server status.
+
+### Manager
+
+Manager navigation includes dashboard, analytics, team performance, reports, notifications, and settings.
+
+Manager dashboard widgets include team productivity, conversion rate, weekly reports, and campaign performance.
+
+Managers cannot access billing, user management, audit logs, or API keys.
+
+### Viewer
+
+Viewer navigation includes dashboard, analytics, reports, and profile.
+
+Viewer dashboard widgets include personal activity, usage overview, and assigned reports.
+
+Viewer reports are read-only.
+
+## Routes
+
+| Route | Purpose |
+|---|---|
+| `/login` | Demo login and role selection |
+| `/dashboard` | Role-aware dashboard |
+| `/analytics` | Analytics hub |
+| `/analytics/traffic` | Traffic analytics |
+| `/analytics/revenue` | Revenue analytics |
+| `/analytics/api-performance` | Admin API performance |
+| `/analytics/errors` | Admin error monitoring |
+| `/analytics/user-activity` | User activity analytics |
+| `/reports` | Reports table and exports |
+| `/users` | Admin user management |
+| `/billing` | Admin billing UI |
+| `/team-activity` | Admin activity feed |
+| `/audit-logs` | Admin audit log view |
+| `/team-performance` | Manager performance view |
+| `/notifications` | Manager notifications view |
+| `/settings` | Admin and manager settings |
+| `/profile` | Viewer profile |
+
+Restricted routes render a role-aware access state instead of exposing unavailable features.
+
+## Key Files
+
+| File | Responsibility |
+|---|---|
+| `lib/auth.tsx` | Mock auth state, login/logout, role switching |
+| `lib/roles.ts` | Permission utilities and role metadata |
+| `lib/workspace.tsx` | Workspace state and persistence |
+| `lib/data.ts` | Mock analytics datasets and live jitter helpers |
+| `components/layout/app-shell.tsx` | Sidebar, top navbar, command palette, role navigation |
+| `components/layout/workspace-switcher.tsx` | SaaS workspace dropdown |
+| `components/layout/protected-page.tsx` | Auth and permission gate |
+| `components/layout/restricted-access.tsx` | Restricted access empty state |
+| `components/dashboard/dashboard-view.tsx` | Role-aware dashboard widgets and charts |
+| `app/team-activity/page.tsx` | Filterable team activity feed |
+
+## Notes
+
+DevPulse is intentionally frontend-only for portfolio/demo use. The current mock data layer can be replaced with API fetchers later without changing the high-level UI structure.
+
+Potential backend endpoints could include:
+
+- `GET /api/metrics`
+- `GET /api/traffic`
+- `GET /api/revenue`
+- `GET /api/reports`
+- `GET /api/users`
+- `GET /api/audit-logs`
+- `GET /api/team-activity`
 
 ## Future Improvements
 
-- Add real authentication and refresh tokens
-- Connect live metrics to Django REST Framework or WebSockets
-- Add server-side PDF exports
-- Add report scheduling
-- Add alert rules for traffic spikes and error-rate anomalies
-- Add chart drilldowns and saved dashboard views
+- Real authentication and refresh tokens
+- Backend-backed RBAC
+- WebSocket or server-sent live metrics
+- Server-side PDF exports
+- Scheduled reports
+- Saved dashboards per workspace
+- Alert rules for traffic spikes and error-rate anomalies
