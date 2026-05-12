@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "@/lib/auth";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { NotificationsProvider } from "@/lib/notifications";
+import { WorkspaceProvider } from "@/lib/workspace";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -18,7 +19,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className={`${inter.variable} font-sans antialiased`}>
         <ThemeProvider>
           <AuthProvider>
-            <NotificationsProvider>{children}</NotificationsProvider>
+            <WorkspaceProvider>
+              <NotificationsProvider>{children}</NotificationsProvider>
+            </WorkspaceProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>

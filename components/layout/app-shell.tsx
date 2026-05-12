@@ -33,6 +33,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/lib/auth";
 import { useTheme } from "@/components/layout/theme-provider";
+import { WorkspaceSwitcher } from "@/components/layout/workspace-switcher";
 import { CommandPalette } from "@/components/command-palette/command-palette";
 import { NotificationsPanel } from "@/components/notifications/notifications-panel";
 import { cn } from "@/lib/utils";
@@ -251,6 +252,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <button className="focus-ring rounded-md border border-border bg-panel p-2 lg:hidden" onClick={() => setSidebarOpen(true)} aria-label="Open navigation">
                 <Menu className="h-5 w-5" />
               </button>
+              <WorkspaceSwitcher />
               <Badge className="border-brand-500/25 bg-brand-500/10 text-brand-700 dark:text-brand-300">
                 <span className="h-2 w-2 rounded-full bg-brand-500" />
                 Live

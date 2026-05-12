@@ -27,8 +27,9 @@ import { InsightCards } from "@/components/insights/insight-cards";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
+import { useWorkspace } from "@/lib/workspace";
 import { activeUsersData, baseMetrics, getLiveActiveUsersData, getLiveMetrics, getLiveTrafficData, revenueByCategory, trafficData, trafficSources } from "@/lib/data";
-import type { ActiveUserPoint, Filters, Metric, Role, TrafficPoint } from "@/types/analytics";
+import type { ActiveUserPoint, Filters, Metric, RevenueCategory, Role, TrafficPoint } from "@/types/analytics";
 
 type RoleWidget = {
   label: string;
@@ -38,28 +39,74 @@ type RoleWidget = {
   tone?: "accent" | "neutral" | "warning" | "danger";
 };
 
-const roleWidgets: Record<Role, RoleWidget[]> = {
-  admin: [
-    { label: "Revenue", value: "$92.4k", description: "+12.8% monthly recurring revenue", icon: CircleDollarSign, tone: "accent" },
-    { label: "User Growth", value: "18.4k", description: "1,204 new users this week", icon: Users },
-    { label: "API Usage", value: "8.9M", description: "Requests across production projects", icon: RadioTower },
-    { label: "System Health", value: "99.98%", description: "Platform uptime over 30 days", icon: ShieldCheck, tone: "accent" },
-    { label: "Subscriptions", value: "1,284", description: "Active paid workspaces", icon: TrendingUp },
-    { label: "Critical Errors", value: "7", description: "Require admin review", icon: AlertTriangle, tone: "danger" },
-    { label: "Server Status", value: "Nominal", description: "All regions responding normally", icon: Server, tone: "accent" }
-  ],
-  manager: [
-    { label: "Team Productivity", value: "87%", description: "Completed weekly objectives", icon: Users, tone: "accent" },
-    { label: "Conversion Rate", value: "6.8%", description: "+0.9% against last sprint", icon: TrendingUp, tone: "accent" },
-    { label: "Weekly Reports", value: "14", description: "Ready for review and export", icon: FileText },
-    { label: "Campaign Performance", value: "42k", description: "Qualified sessions from active campaigns", icon: BarChart3 }
-  ],
-  viewer: [
-    { label: "Personal Activity", value: "24", description: "Reports viewed this month", icon: Activity, tone: "accent" },
-    { label: "Usage Overview", value: "68%", description: "Workspace insights consumed", icon: Gauge },
-    { label: "Assigned Reports", value: "5", description: "Read-only reports awaiting review", icon: FileText }
-  ]
-};
+function scaleValue(value: number, multiplier: number) {
+  return Math.max(1, Math.round(value * multiplier));
+}
+
+function compact(value: number) {
+  return new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(value);
+}
+
+function scaleMetric(metric: Metric, multiplier: number): Metric {
+  const valueMultiplier = metric.unit === "percent" ? 0.72 + multiplier * 0.28 : multiplier;
+  return {
+    ...metric,
+    value: Number((metric.value * valueMultiplier).toFixed(metric.unit === "percent" ? 2 : 0)),
+    sparkline: metric.sparkline.map((value) => Number((value * valueMultiplier).toFixed(0)))
+  };
+}
+
+function scaleTraffic(point: TrafficPoint, multiplier: number): TrafficPoint {
+  return {
+    ...point,
+    visitors: scaleValue(point.visitors, multiplier),
+    requests: scaleValue(point.requests, multiplier),
+    errors: scaleValue(point.errors, multiplier === 0.18 ? 0.42 : multiplier)
+  };
+}
+
+function scaleActiveUsers(point: ActiveUserPoint, multiplier: number): ActiveUserPoint {
+  return {
+    ...point,
+    users: scaleValue(point.users, multiplier),
+    mobile: scaleValue(point.mobile, multiplier),
+    desktop: scaleValue(point.desktop, multiplier)
+  };
+}
+
+function scaleRevenue(category: RevenueCategory, multiplier: number): RevenueCategory {
+  return {
+    ...category,
+    revenue: scaleValue(category.revenue, multiplier),
+    subscriptions: scaleValue(category.subscriptions, multiplier)
+  };
+}
+
+function roleWidgets(role: Role, multiplier: number): RoleWidget[] {
+  const widgets: Record<Role, RoleWidget[]> = {
+    admin: [
+      { label: "Revenue", value: `$${compact(scaleValue(92400, multiplier))}`, description: "+12.8% monthly recurring revenue", icon: CircleDollarSign, tone: "accent" },
+      { label: "User Growth", value: compact(scaleValue(18400, multiplier)), description: `${compact(scaleValue(1204, multiplier))} new users this week`, icon: Users },
+      { label: "API Usage", value: compact(scaleValue(8900000, multiplier)), description: "Requests across selected workspace", icon: RadioTower },
+      { label: "System Health", value: multiplier < 0.25 ? "99.91%" : "99.98%", description: "Platform uptime over 30 days", icon: ShieldCheck, tone: "accent" },
+      { label: "Subscriptions", value: compact(scaleValue(1284, multiplier)), description: "Active paid workspaces", icon: TrendingUp },
+      { label: "Critical Errors", value: String(scaleValue(7, multiplier < 0.25 ? 0.42 : multiplier)), description: "Require admin review", icon: AlertTriangle, tone: "danger" },
+      { label: "Server Status", value: multiplier < 0.25 ? "Testing" : "Nominal", description: "All regions responding normally", icon: Server, tone: "accent" }
+    ],
+    manager: [
+      { label: "Team Productivity", value: `${scaleValue(87, 0.82 + multiplier * 0.18)}%`, description: "Completed weekly objectives", icon: Users, tone: "accent" },
+      { label: "Conversion Rate", value: `${(4.8 + multiplier * 2).toFixed(1)}%`, description: "+0.9% against last sprint", icon: TrendingUp, tone: "accent" },
+      { label: "Weekly Reports", value: String(scaleValue(14, multiplier)), description: "Ready for review and export", icon: FileText },
+      { label: "Campaign Performance", value: compact(scaleValue(42000, multiplier)), description: "Qualified sessions from active campaigns", icon: BarChart3 }
+    ],
+    viewer: [
+      { label: "Personal Activity", value: String(scaleValue(24, 0.75 + multiplier * 0.25)), description: "Reports viewed this month", icon: Activity, tone: "accent" },
+      { label: "Usage Overview", value: `${scaleValue(68, 0.8 + multiplier * 0.2)}%`, description: "Workspace insights consumed", icon: Gauge },
+      { label: "Assigned Reports", value: String(scaleValue(5, multiplier < 0.25 ? 0.5 : multiplier)), description: "Read-only reports awaiting review", icon: FileText }
+    ]
+  };
+  return widgets[role];
+}
 
 function RoleWidgetCard({ widget }: { widget: RoleWidget }) {
   const Icon = widget.icon;
@@ -88,9 +135,10 @@ function RoleWidgetCard({ widget }: { widget: RoleWidget }) {
 
 export function DashboardView({ mode = "dashboard" }: { mode?: "dashboard" | "analytics" }) {
   const { role } = useAuth();
-  const [metrics, setMetrics] = useState<Metric[]>(baseMetrics);
-  const [traffic, setTraffic] = useState<TrafficPoint[]>(trafficData);
-  const [activeUsers, setActiveUsers] = useState<ActiveUserPoint[]>(activeUsersData);
+  const { workspace } = useWorkspace();
+  const [metrics, setMetrics] = useState<Metric[]>(() => baseMetrics.map((metric) => scaleMetric(metric, workspace.multiplier)));
+  const [traffic, setTraffic] = useState<TrafficPoint[]>(() => trafficData.map((point) => scaleTraffic(point, workspace.multiplier)));
+  const [activeUsers, setActiveUsers] = useState<ActiveUserPoint[]>(() => activeUsersData.map((point) => scaleActiveUsers(point, workspace.multiplier)));
   const [filters, setFilters] = useState<Filters>({
     dateRange: "7d",
     category: "All categories",
@@ -100,17 +148,22 @@ export function DashboardView({ mode = "dashboard" }: { mode?: "dashboard" | "an
   const [tick, setTick] = useState(0);
 
   useEffect(() => {
+    setMetrics(baseMetrics.map((metric) => scaleMetric(metric, workspace.multiplier)));
+    setTraffic(trafficData.map((point) => scaleTraffic(point, workspace.multiplier)));
+    setActiveUsers(activeUsersData.map((point) => scaleActiveUsers(point, workspace.multiplier)));
+
     const interval = window.setInterval(() => {
-      setMetrics(getLiveMetrics());
-      setTraffic(getLiveTrafficData());
-      setActiveUsers(getLiveActiveUsersData());
+      setMetrics(getLiveMetrics().map((metric) => scaleMetric(metric, workspace.multiplier)));
+      setTraffic(getLiveTrafficData().map((point) => scaleTraffic(point, workspace.multiplier)));
+      setActiveUsers(getLiveActiveUsersData().map((point) => scaleActiveUsers(point, workspace.multiplier)));
       setTick((current) => current + 1);
     }, 5000);
     return () => window.clearInterval(interval);
-  }, []);
+  }, [workspace.multiplier]);
 
   const isAnalytics = mode === "analytics";
-  const widgets = roleWidgets[role];
+  const widgets = roleWidgets(role, workspace.multiplier);
+  const revenue = revenueByCategory.map((category) => scaleRevenue(category, workspace.multiplier));
 
   return (
     <>
@@ -119,13 +172,13 @@ export function DashboardView({ mode = "dashboard" }: { mode?: "dashboard" | "an
         description={
           isAnalytics
             ? "Explore acquisition, engagement, revenue, and reliability trends with filters ready for a real API."
-            : "Monitor traffic, revenue, API health, and conversion activity as if a production stream is flowing in."
+            : `Monitor ${workspace.name.toLowerCase()} traffic, revenue, API health, and conversion activity.`
         }
       >
         <div className="flex gap-2">
           <Badge className="border-brand-500/25 bg-brand-500/10 text-brand-700 dark:text-brand-300">
             <Activity className="h-3.5 w-3.5" />
-            refresh {tick}
+            {workspace.name} · refresh {tick}
           </Badge>
           <Button variant="primary">
             <Zap className="h-4 w-4" />
@@ -160,7 +213,7 @@ export function DashboardView({ mode = "dashboard" }: { mode?: "dashboard" | "an
           <ActiveAreaChart data={activeUsers} />
         </ChartCard>
         <ChartCard title="Revenue by category" eyebrow="Commercial pulse">
-          <RevenueBarChart data={revenueByCategory} />
+          <RevenueBarChart data={revenue} />
         </ChartCard>
         <ChartCard title="Traffic sources" eyebrow="Acquisition mix">
           <SourceDonutChart data={trafficSources} />
