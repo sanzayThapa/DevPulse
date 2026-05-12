@@ -4,6 +4,8 @@ DevPulse is a frontend-first SaaS analytics platform built with Next.js. It pres
 
 All data is local mock data. No backend is required to run the app.
 
+![Dashboard](./assets/DevPulse.png)
+
 ## Highlights
 
 - Premium modern SaaS UI inspired by Linear, Vercel, Stripe, and Notion
@@ -69,6 +71,9 @@ No real credentials are required. Use the login page to choose a demo role:
 
 Demo auth state is stored in `localStorage` under `devpulse-auth`.
 
+![Demo Access](./assets/demo-access.png)
+
+
 ## Workspaces
 
 The top navbar includes a workspace switcher. The selected workspace is stored in `localStorage` under `devpulse-workspace`.
@@ -82,6 +87,9 @@ Available demo workspaces:
 
 Changing workspace updates dashboard mock data, including metrics, traffic, active users, revenue charts, and role-specific widgets.
 
+![Workspace](./assets/workspace.png)
+
+
 ## Role-Based Experiences
 
 ### Admin
@@ -89,6 +97,9 @@ Changing workspace updates dashboard mock data, including metrics, traffic, acti
 Admin navigation includes dashboard, analytics, API performance, error monitoring, users, team activity, billing, reports, audit logs, and settings.
 
 Admin dashboard widgets include revenue, user growth, API usage, system health, subscriptions, critical errors, and server status.
+
+![Admin Dashboard](./assets/admin-dashboard.png)
+
 
 ### Manager
 
@@ -98,6 +109,9 @@ Manager dashboard widgets include team productivity, conversion rate, weekly rep
 
 Managers cannot access billing, user management, audit logs, or API keys.
 
+![Manager Dashboard](./assets/manager-dashboard.png)
+
+
 ### Viewer
 
 Viewer navigation includes dashboard, analytics, reports, and profile.
@@ -105,6 +119,10 @@ Viewer navigation includes dashboard, analytics, reports, and profile.
 Viewer dashboard widgets include personal activity, usage overview, and assigned reports.
 
 Viewer reports are read-only.
+
+![Viewer Dashboard](./assets/viewer-dashboard.png)
+
+
 
 ## Routes
 
