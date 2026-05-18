@@ -24,6 +24,7 @@ import { SourceDonutChart } from "@/components/charts/source-donut-chart";
 import { FilterBar } from "@/components/filters/filter-bar";
 import { PageHeader } from "@/components/layout/page-header";
 import { InsightCards } from "@/components/insights/insight-cards";
+import { LiveDataSection } from "@/components/live-data/live-data-section";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
@@ -202,6 +203,8 @@ export function DashboardView({ mode = "dashboard" }: { mode?: "dashboard" | "an
           ))}
         </div>
       )}
+
+      <LiveDataSection />
 
       {role !== "viewer" ? <InsightCards /> : null}
 
