@@ -4,6 +4,7 @@ export type Permission =
   | "view:dashboard"
   | "view:analytics"
   | "view:api-performance"
+  | "view:system-health"
   | "view:error-monitoring"
   | "view:reports"
   | "view:users"
@@ -26,6 +27,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "view:dashboard",
     "view:analytics",
     "view:api-performance",
+    "view:system-health",
     "view:error-monitoring",
     "view:reports",
     "view:users",
