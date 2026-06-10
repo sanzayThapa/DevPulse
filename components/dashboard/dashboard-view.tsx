@@ -1,6 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import {
+  closestCenter,
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  rectSortingStrategy
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import {
   Activity,
   AlertTriangle,
@@ -8,7 +25,9 @@ import {
   CircleDollarSign,
   FileText,
   Gauge,
+  GripVertical,
   RadioTower,
+  RotateCcw,
   Server,
   ShieldCheck,
   TrendingUp,
@@ -29,6 +48,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
 import { useWorkspace } from "@/lib/workspace";
+import { cn } from "@/lib/utils";
 import { activeUsersData, baseMetrics, getLiveActiveUsersData, getLiveMetrics, getLiveTrafficData, revenueByCategory, trafficData, trafficSources } from "@/lib/data";
 import type { ActiveUserPoint, Filters, Metric, RevenueCategory, Role, TrafficPoint } from "@/types/analytics";
 
@@ -39,6 +59,15 @@ type RoleWidget = {
   icon: React.ElementType;
   tone?: "accent" | "neutral" | "warning" | "danger";
 };
+
+type DashboardItem = {
+  id: string;
+  label: string;
+  content: React.ReactNode;
+};
+
+const LAYOUT_STORAGE_PREFIX = "devpulse-dashboard-layout";
+const DEFAULT_CHART_ORDER = ["chart:traffic", "chart:active-users", "chart:revenue", "chart:sources"];
 
 function scaleValue(value: number, multiplier: number) {
   return Math.max(1, Math.round(value * multiplier));
@@ -81,6 +110,31 @@ function scaleRevenue(category: RevenueCategory, multiplier: number): RevenueCat
     revenue: scaleValue(category.revenue, multiplier),
     subscriptions: scaleValue(category.subscriptions, multiplier)
   };
+}
+
+function layoutStorageKey(mode: "dashboard" | "analytics", role: Role, workspaceId: string) {
+  return `${LAYOUT_STORAGE_PREFIX}:${mode}:${role}:${workspaceId}`;
+}
+
+function normalizeOrder(savedOrder: string[] | null, itemIds: string[]) {
+  if (!savedOrder) return itemIds;
+
+  const available = new Set(itemIds);
+  const ordered = savedOrder.filter((id) => available.has(id));
+  const missing = itemIds.filter((id) => !ordered.includes(id));
+
+  return [...ordered, ...missing];
+}
+
+function readSavedLayout(key: string) {
+  try {
+    const saved = window.localStorage.getItem(key);
+    if (!saved) return null;
+    const parsed = JSON.parse(saved) as { cards?: string[]; charts?: string[] };
+    return parsed;
+  } catch {
+    return null;
+  }
 }
 
 function roleWidgets(role: Role, multiplier: number): RoleWidget[] {
@@ -134,6 +188,69 @@ function RoleWidgetCard({ widget }: { widget: RoleWidget }) {
   );
 }
 
+function SortableDashboardItem({ id, label, children }: { id: string; label: string; children: React.ReactNode }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={{ transform: CSS.Transform.toString(transform), transition }}
+      className={cn(
+        "group relative min-w-0 touch-manipulation rounded-lg outline-none transition-shadow",
+        isDragging && "z-10 shadow-elevated"
+      )}
+    >
+      <button
+        type="button"
+        aria-label={`Move ${label}`}
+        className={cn(
+          "focus-ring absolute right-2 top-2 z-10 grid h-8 w-8 cursor-grab place-items-center rounded-md border border-border bg-panel/95 text-subtle opacity-0 shadow-sm transition hover:border-brand-500/40 hover:text-foreground active:cursor-grabbing group-hover:opacity-100 group-focus-within:opacity-100",
+          isDragging && "opacity-100"
+        )}
+        {...attributes}
+        {...listeners}
+      >
+        <GripVertical className="h-4 w-4" />
+      </button>
+      {children}
+    </div>
+  );
+}
+
+function SortableGrid({ items, order, onOrderChange, className }: { items: DashboardItem[]; order: string[]; onOrderChange: (order: string[]) => void; className: string }) {
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+  const itemMap = useMemo(() => new Map(items.map((item) => [item.id, item])), [items]);
+  const visibleItems = order.map((id) => itemMap.get(id)).filter((item): item is DashboardItem => Boolean(item));
+
+  function onDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = order.indexOf(String(active.id));
+    const newIndex = order.indexOf(String(over.id));
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    onOrderChange(arrayMove(order, oldIndex, newIndex));
+  }
+
+  return (
+    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+      <SortableContext items={order} strategy={rectSortingStrategy}>
+        <div className={className}>
+          {visibleItems.map((item) => (
+            <SortableDashboardItem key={item.id} id={item.id} label={item.label}>
+              {item.content}
+            </SortableDashboardItem>
+          ))}
+        </div>
+      </SortableContext>
+    </DndContext>
+  );
+}
+
 export function DashboardView({ mode = "dashboard" }: { mode?: "dashboard" | "analytics" }) {
   const { role } = useAuth();
   const { workspace } = useWorkspace();
@@ -147,6 +264,9 @@ export function DashboardView({ mode = "dashboard" }: { mode?: "dashboard" | "an
     project: "All projects"
   });
   const [tick, setTick] = useState(0);
+  const [cardOrder, setCardOrder] = useState<string[]>([]);
+  const [chartOrder, setChartOrder] = useState<string[]>([]);
+  const [loadedLayoutKey, setLoadedLayoutKey] = useState<string | null>(null);
 
   useEffect(() => {
     setMetrics(baseMetrics.map((metric) => scaleMetric(metric, workspace.multiplier)));
@@ -163,8 +283,92 @@ export function DashboardView({ mode = "dashboard" }: { mode?: "dashboard" | "an
   }, [workspace.multiplier]);
 
   const isAnalytics = mode === "analytics";
-  const widgets = roleWidgets(role, workspace.multiplier);
-  const revenue = revenueByCategory.map((category) => scaleRevenue(category, workspace.multiplier));
+  const widgets = useMemo(() => roleWidgets(role, workspace.multiplier), [role, workspace.multiplier]);
+  const revenue = useMemo(() => revenueByCategory.map((category) => scaleRevenue(category, workspace.multiplier)), [workspace.multiplier]);
+  const storageKey = layoutStorageKey(mode, role, workspace.id);
+  const cardItems: DashboardItem[] = useMemo(
+    () =>
+      isAnalytics
+        ? metrics.map((metric) => ({
+            id: `metric:${metric.key}`,
+            label: metric.label,
+            content: <MetricCard metric={metric} />
+          }))
+        : widgets.map((widget) => ({
+            id: `widget:${widget.label}`,
+            label: widget.label,
+            content: <RoleWidgetCard widget={widget} />
+          })),
+    [isAnalytics, metrics, widgets]
+  );
+  const chartItems: DashboardItem[] = useMemo(
+    () => [
+      {
+        id: "chart:traffic",
+        label: "Traffic over time",
+        content: (
+          <ChartCard title="Traffic over time" eyebrow="Requests and visitors">
+            <TrafficLineChart data={traffic} />
+          </ChartCard>
+        )
+      },
+      {
+        id: "chart:active-users",
+        label: "Active users",
+        content: (
+          <ChartCard title="Active users" eyebrow="Weekly sessions">
+            <ActiveAreaChart data={activeUsers} />
+          </ChartCard>
+        )
+      },
+      {
+        id: "chart:revenue",
+        label: "Revenue by category",
+        content: (
+          <ChartCard title="Revenue by category" eyebrow="Commercial pulse">
+            <RevenueBarChart data={revenue} />
+          </ChartCard>
+        )
+      },
+      {
+        id: "chart:sources",
+        label: "Traffic sources",
+        content: (
+          <ChartCard title="Traffic sources" eyebrow="Acquisition mix">
+            <SourceDonutChart data={trafficSources} />
+          </ChartCard>
+        )
+      }
+    ],
+    [activeUsers, revenue, traffic]
+  );
+  const cardIds = useMemo(
+    () => (isAnalytics ? baseMetrics.map((metric) => `metric:${metric.key}`) : widgets.map((widget) => `widget:${widget.label}`)),
+    [isAnalytics, widgets]
+  );
+  const chartIds = DEFAULT_CHART_ORDER;
+  const defaultCardOrder = useMemo(() => cardIds, [cardIds]);
+  const defaultChartOrder = useMemo(() => chartIds, [chartIds]);
+  const layoutChanged = cardOrder.join("|") !== defaultCardOrder.join("|") || chartOrder.join("|") !== defaultChartOrder.join("|");
+
+  useEffect(() => {
+    const saved = readSavedLayout(storageKey);
+    setCardOrder(normalizeOrder(saved?.cards ?? null, defaultCardOrder));
+    setChartOrder(normalizeOrder(saved?.charts ?? null, defaultChartOrder));
+    setLoadedLayoutKey(storageKey);
+  }, [storageKey, defaultCardOrder, defaultChartOrder]);
+
+  useEffect(() => {
+    if (loadedLayoutKey !== storageKey) return;
+
+    window.localStorage.setItem(storageKey, JSON.stringify({ cards: cardOrder, charts: chartOrder }));
+  }, [cardOrder, chartOrder, loadedLayoutKey, storageKey]);
+
+  function resetLayout() {
+    setCardOrder(defaultCardOrder);
+    setChartOrder(defaultChartOrder);
+    window.localStorage.removeItem(storageKey);
+  }
 
   return (
     <>
@@ -176,11 +380,15 @@ export function DashboardView({ mode = "dashboard" }: { mode?: "dashboard" | "an
             : `Monitor ${workspace.name.toLowerCase()} traffic, revenue, API health, and conversion activity.`
         }
       >
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Badge className="border-brand-500/25 bg-brand-500/10 text-brand-700 dark:text-brand-300">
             <Activity className="h-3.5 w-3.5" />
             {workspace.name} · refresh {tick}
           </Badge>
+          <Button variant="secondary" onClick={resetLayout} disabled={!layoutChanged} className="disabled:cursor-not-allowed disabled:opacity-50">
+            <RotateCcw className="h-4 w-4" />
+            Reset layout
+          </Button>
           <Button variant="primary">
             <Zap className="h-4 w-4" />
             Deploy view
@@ -190,38 +398,23 @@ export function DashboardView({ mode = "dashboard" }: { mode?: "dashboard" | "an
 
       <FilterBar filters={filters} onChange={setFilters} />
 
-      {isAnalytics ? (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {metrics.map((metric) => (
-            <MetricCard key={metric.key} metric={metric} />
-          ))}
-        </div>
-      ) : (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {widgets.map((widget) => (
-            <RoleWidgetCard key={widget.label} widget={widget} />
-          ))}
-        </div>
-      )}
+      <SortableGrid
+        items={cardItems}
+        order={cardOrder.length ? cardOrder : defaultCardOrder}
+        onOrderChange={setCardOrder}
+        className={isAnalytics ? "grid gap-4 sm:grid-cols-2 xl:grid-cols-3" : "grid gap-4 sm:grid-cols-2 xl:grid-cols-4"}
+      />
 
       <LiveDataSection />
 
       {role !== "viewer" ? <InsightCards /> : null}
 
-      <div className="mt-6 grid gap-6 xl:grid-cols-2">
-        <ChartCard title="Traffic over time" eyebrow="Requests and visitors">
-          <TrafficLineChart data={traffic} />
-        </ChartCard>
-        <ChartCard title="Active users" eyebrow="Weekly sessions">
-          <ActiveAreaChart data={activeUsers} />
-        </ChartCard>
-        <ChartCard title="Revenue by category" eyebrow="Commercial pulse">
-          <RevenueBarChart data={revenue} />
-        </ChartCard>
-        <ChartCard title="Traffic sources" eyebrow="Acquisition mix">
-          <SourceDonutChart data={trafficSources} />
-        </ChartCard>
-      </div>
+      <SortableGrid
+        items={chartItems}
+        order={chartOrder.length ? chartOrder : defaultChartOrder}
+        onOrderChange={setChartOrder}
+        className="mt-6 grid gap-6 xl:grid-cols-2"
+      />
     </>
   );
 }
