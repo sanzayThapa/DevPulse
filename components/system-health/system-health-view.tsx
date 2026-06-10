@@ -23,6 +23,7 @@ import {
   Database,
   Globe2,
   HardDrive,
+  RadioTower,
   Network,
   Server,
   TriangleAlert,
@@ -43,6 +44,7 @@ type HealthPoint = {
   memory: number;
   latency: number;
   connections: number;
+  dbLoad: number;
 };
 
 const regions: Record<RegionKey, { label: string; city: string; baseLatency: number; load: number; uptime: number }> = {
@@ -111,17 +113,24 @@ function initialSeries(region: RegionKey): HealthPoint[] {
       cpu: Math.round(clamp((48 + drift * 16) * config.load, 18, 92)),
       memory: Math.round(clamp((62 + Math.cos(index / 2) * 10) * config.load, 32, 94)),
       latency: Math.round(clamp(config.baseLatency + drift * 18 + index * 1.2, 24, 210)),
-      connections: Math.round(clamp((1180 + drift * 280 + index * 34) * config.load, 420, 3400))
+      connections: Math.round(clamp((1180 + drift * 280 + index * 34) * config.load, 420, 3400)),
+      dbLoad: Math.round(clamp((42 + Math.cos(index / 2.8) * 18) * config.load, 22, 92))
     };
   });
 }
 
-function ProgressIndicator({ value, status }: { value: number; status: HealthStatus }) {
+function ProgressIndicator({ value, status, label }: { value: number; status: HealthStatus; label?: string }) {
   return (
     <div className="mt-4">
+      {label ? (
+        <div className="mb-1.5 flex items-center justify-between text-[11px] font-medium text-subtle">
+          <span>Load</span>
+          <span>{label}</span>
+        </div>
+      ) : null}
       <div className="h-2 overflow-hidden rounded-full bg-muted">
         <div
-          className={cn("h-full rounded-full transition-all duration-700 ease-out", statusStyles[status].bar)}
+          className={cn("h-full rounded-full shadow-sm transition-all duration-700 ease-out", statusStyles[status].bar)}
           style={{ width: `${clamp(value, 0, 100)}%` }}
         />
       </div>
@@ -136,7 +145,8 @@ function MetricPanel({
   detail,
   icon: Icon,
   status,
-  progress
+  progress,
+  trend
 }: {
   label: string;
   value: string | number;
@@ -145,6 +155,7 @@ function MetricPanel({
   icon: React.ElementType;
   status: HealthStatus;
   progress: number;
+  trend?: string;
 }) {
   const StatusIcon = statusStyles[status].icon;
 
@@ -166,9 +177,25 @@ function MetricPanel({
           {status}
         </Badge>
       </div>
-      <ProgressIndicator value={progress} status={status} />
-      <p className="mt-3 text-xs leading-5 text-subtle">{detail}</p>
+      <ProgressIndicator value={progress} status={status} label={`${Math.round(progress)}%`} />
+      <div className="mt-3 flex items-center justify-between gap-3 text-xs leading-5 text-subtle">
+        <p>{detail}</p>
+        {trend ? <span className="shrink-0 rounded-md border border-border bg-muted/45 px-2 py-0.5 font-medium">{trend}</span> : null}
+      </div>
     </section>
+  );
+}
+
+function StatusLegend() {
+  return (
+    <div className="flex flex-wrap gap-2">
+      {(["Healthy", "Warning", "Critical"] as HealthStatus[]).map((status) => (
+        <Badge key={status} className={statusStyles[status].badge}>
+          <span className={cn("h-2 w-2 rounded-full", statusStyles[status].dot)} />
+          {status}
+        </Badge>
+      ))}
+    </div>
   );
 }
 
@@ -205,7 +232,8 @@ export function SystemHealthView() {
           cpu: jitter(last.cpu, 18 * config.load, 16, 96),
           memory: jitter(last.memory, 12 * config.load, 35, 96),
           latency: jitter(last.latency, 28, config.baseLatency - 12, 230),
-          connections: jitter(last.connections, 420 * config.load, 380, 3900)
+          connections: jitter(last.connections, 420 * config.load, 380, 3900),
+          dbLoad: jitter(last.dbLoad, 16 * config.load, 20, 96)
         };
         return [...current.slice(-17), next];
       });
@@ -221,6 +249,8 @@ export function SystemHealthView() {
   const overall: HealthStatus = database === "Critical" || latest.cpu > 90 ? "Critical" : database === "Warning" || latest.memory > 78 ? "Warning" : "Healthy";
 
   const connectionLoad = Math.round((latest.connections / 3900) * 100);
+  const uptimeProgress = Math.max(0, Math.min(100, (uptime - 99.7) / 0.299 * 100));
+  const lastUpdated = new Date().toLocaleTimeString("en", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
 
   return (
     <>
@@ -236,6 +266,10 @@ export function SystemHealthView() {
           <Badge>
             <Activity className="h-3.5 w-3.5" />
             refresh {tick}
+          </Badge>
+          <Badge>
+            <RadioTower className="h-3.5 w-3.5" />
+            {lastUpdated}
           </Badge>
         </div>
       </PageHeader>
@@ -263,13 +297,21 @@ export function SystemHealthView() {
         </select>
       </div>
 
+      <div className="mb-5 flex flex-col gap-3 rounded-lg border border-border bg-muted/25 p-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <p className="text-sm font-semibold">Operational thresholds</p>
+          <p className="mt-1 text-xs text-subtle">Mock telemetry updates every 3.2 seconds with status derived from live CPU, memory, latency, and database load.</p>
+        </div>
+        <StatusLegend />
+      </div>
+
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        <MetricPanel label="CPU Usage" value={latest.cpu} suffix="%" detail="Container worker pool utilization" icon={Cpu} status={statusFor(latest.cpu, 72, 88)} progress={latest.cpu} />
-        <MetricPanel label="Memory Usage" value={latest.memory} suffix="%" detail="Resident memory across active services" icon={HardDrive} status={statusFor(latest.memory, 76, 90)} progress={latest.memory} />
-        <MetricPanel label="Server Uptime" value={uptime.toFixed(3)} suffix="%" detail="Availability over the current 30-day window" icon={Clock3} status={uptime < 99.9 ? "Warning" : "Healthy"} progress={uptime} />
-        <MetricPanel label="Latency" value={latest.latency} suffix="ms" detail="Regional p95 response latency" icon={Wifi} status={latencyStatus(latest.latency)} progress={Math.min(100, (latest.latency / 220) * 100)} />
-        <MetricPanel label="Active Connections" value={latest.connections.toLocaleString()} detail="Open socket and API gateway sessions" icon={Network} status={statusFor(connectionLoad, 72, 88)} progress={connectionLoad} />
-        <MetricPanel label="Database Status" value={database} detail="Primary PostgreSQL writer and replica sync" icon={Database} status={database} progress={database === "Healthy" ? 96 : database === "Warning" ? 68 : 32} />
+        <MetricPanel label="CPU Usage" value={latest.cpu} suffix="%" detail="Container worker pool utilization" icon={Cpu} status={statusFor(latest.cpu, 72, 88)} progress={latest.cpu} trend={`${jitter(2.8, 1.4, 1, 5)} cores`} />
+        <MetricPanel label="Memory Usage" value={latest.memory} suffix="%" detail="Resident memory across active services" icon={HardDrive} status={statusFor(latest.memory, 76, 90)} progress={latest.memory} trend={`${jitter(12, 4, 8, 18)} GB`} />
+        <MetricPanel label="Server Uptime" value={uptime.toFixed(3)} suffix="%" detail="Availability over the current 30-day window" icon={Clock3} status={uptime < 99.9 ? "Warning" : "Healthy"} progress={uptimeProgress} trend="30d SLA" />
+        <MetricPanel label="Latency" value={latest.latency} suffix="ms" detail="Regional p95 response latency" icon={Wifi} status={latencyStatus(latest.latency)} progress={Math.min(100, (latest.latency / 220) * 100)} trend="p95" />
+        <MetricPanel label="Active Connections" value={latest.connections.toLocaleString()} detail="Open socket and API gateway sessions" icon={Network} status={statusFor(connectionLoad, 72, 88)} progress={connectionLoad} trend={`${connectionLoad}% cap`} />
+        <MetricPanel label="Database Status" value={database} detail="Primary PostgreSQL writer and replica sync" icon={Database} status={database} progress={latest.dbLoad} trend={`${latest.dbLoad}% load`} />
       </div>
 
       <div className="mt-6 grid gap-6 xl:grid-cols-3">
